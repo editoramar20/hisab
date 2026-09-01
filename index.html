@@ -849,7 +849,6 @@
 
     <input type="file" id="logoUploadInput" accept="image/*" style="display: none;" onchange="handleLogoUpload(event)">
     <input type="file" id="jsonRestoreInput" accept=".json" style="display: none;" onchange="handleJsonRestore(event)">
-    <datalist id="customerDatalist"></datalist>
 
     <div class="app-header">
         <div class="brand-box">
@@ -948,7 +947,7 @@
                 </div>
                 <div class="input-group">
                     <label id="lblParty">Customer / Note</label>
-                    <input type="text" id="inpParty" list="customerDatalist" placeholder="Name" onchange="autoFillCustomerInfo(this.value)">
+                    <input type="text" id="inpParty" placeholder="Name" onchange="autoFillCustomerInfo(this.value)">
                 </div>
             </div>
 
@@ -1001,11 +1000,13 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <label>Fee Mode</label>
+                    <label>Fee Kaise Liya?</label>
                     <select id="inpChargeMode">
-                        <option value="Cash">💵 Cash</option>
-                        <option value="Online">📱 Online / UPI</option>
+                        <option value="Cash">💵 Cash Se</option>
+                        <option value="Online">📱 UPI Se</option>
+                        <option value="Deducted">✂️ Amount Mein Se Kaat Kar</option>
                     </select>
+                    <div style="font-size:9px;color:var(--text-muted);margin-top:4px;line-height:1.3;">Deposit: bank amount se fee adjust • Withdrawal: customer ko net cash</div>
                 </div>
             </div>
 
@@ -1226,7 +1227,24 @@
         </div>
     </div>
 
-    <!-- MODAL 8: Customer Slip Receipt -->
+    <!-- MODAL 8: Unpaid Settlement / Fee Collection -->
+    <div class="modal-backdrop" id="modalUnpaidSettle" onclick="handleBackdropClick(event, 'modalUnpaidSettle')">
+        <div class="modal-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalUnpaidSettle')">✕</button>
+            <h3 style="font-size:16px;font-weight:800;margin-bottom:6px;">💵 Settle Unpaid Withdrawal</h3>
+            <div id="unpaidSettleInfo" style="background:var(--surface-soft);border:1px solid var(--border-light);border-radius:10px;padding:10px;margin-bottom:12px;font-size:11px;"></div>
+            <div style="font-size:11px;font-weight:800;margin-bottom:7px;">Fee kaise mila?</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+                <button type="button" class="btn-action-small" onclick="completeUnpaidSettlement('Cash')">💵 Fee Cash</button>
+                <button type="button" class="btn-action-small" onclick="completeUnpaidSettlement('Online')">📱 Fee UPI</button>
+                <button type="button" class="btn-action-small" onclick="completeUnpaidSettlement('Deducted')">✂️ Amount Se Kati</button>
+                <button type="button" class="btn-action-small btn-act-del" onclick="completeUnpaidSettlement('None')">⏳ Fee Nahi Mili</button>
+            </div>
+            <div style="font-size:9px;color:var(--text-muted);margin-top:9px;line-height:1.35;">Fee Nahi Mili चुनने पर withdrawal paid ho jayega, lekin fee profit mein add nahi hogi.</div>
+        </div>
+    </div>
+
+    <!-- MODAL 9: Customer Slip Receipt -->
     <div class="modal-backdrop" id="modalSlip" onclick="handleBackdropClick(event, 'modalSlip')">
         <div class="modal-drawer">
             <button type="button" class="btn-close-modal" onclick="closeModal('modalSlip')">✕</button>
@@ -1292,7 +1310,25 @@
         unpaidWithdrawals: []
     };
 
+    function normalizeFeeFields() {
+        (database.transactions || []).forEach(function(tx) {
+            if ((tx.type === 'Deposit' || tx.type === 'Withdrawal') && !tx.feeCollection) {
+                tx.feeCollection = tx.chargeMode || 'Cash';
+            }
+        });
+        (database.allTransactionsHistory || []).forEach(function(tx) {
+            if ((tx.type === 'Deposit' || tx.type === 'Withdrawal') && !tx.feeCollection) {
+                tx.feeCollection = tx.chargeMode || 'Cash';
+            }
+        });
+        (database.unpaidWithdrawals || []).forEach(function(x) {
+            if (x.feeDue == null) x.feeDue = Number(x.fee) || 0;
+            if (x.feeReceived == null) x.feeReceived = 0;
+        });
+    }
+
     function init() {
+        normalizeFeeFields();
         var today = new Date();
         document.getElementById('liveDateChip').innerText = today.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' });
         
@@ -1364,7 +1400,6 @@
         applyTheme(database.darkMode || false);
         applyLogoToUI();
         recalculateAndRender();
-        updateCustomerDatalist();
         renderDisputes();
     }
 
@@ -1614,7 +1649,7 @@
                     </div>
                     <div class="unpaid-item-amt">₹${Number(x.amount || 0).toLocaleString('en-IN')}</div>
                 </div>
-                ${x.fee ? '<div class="unpaid-item-meta">Fee: ₹' + Number(x.fee).toLocaleString('en-IN') + '</div>' : ''}
+                ${(Number(x.feeDue != null ? x.feeDue : x.fee) || 0) ? '<div class="unpaid-item-meta">Fee Due: ₹' + Number(x.feeDue != null ? x.feeDue : x.fee).toLocaleString('en-IN') + '</div>' : ''}
                 <div class="unpaid-item-actions">
                     <button type="button" class="btn-action-small btn-mark-paid" onclick="markUnpaidPaid(\'${x.id}\')">💵 Mark Paid</button>
                     <button type="button" class="btn-action-small btn-unpaid-delete" onclick="deleteUnpaidWithdrawal(\'${x.id}\')">🗑️ Delete</button>
@@ -1636,17 +1671,6 @@
 
     function setFeeQuick(val) {
         document.getElementById('inpCharge').value = val;
-    }
-
-    function updateCustomerDatalist() {
-        var dl = document.getElementById('customerDatalist');
-        if (!dl) return;
-        dl.innerHTML = '';
-        Object.keys(database.savedCustomers || {}).forEach(function(name) {
-            var opt = document.createElement('option');
-            opt.value = name;
-            dl.appendChild(opt);
-        });
     }
 
     function autoFillCustomerInfo(name) {
@@ -1722,8 +1746,7 @@
         if (activeType !== 'Expense' && activeType !== 'BankLoad' && party !== 'Customer') {
             database.savedCustomers = database.savedCustomers || {};
             database.savedCustomers[party] = { mobile: mobile, bank: bank, acc: acc };
-            updateCustomerDatalist();
-        }
+            }
 
         var now = new Date();
         var unpaid = (activeType === 'Withdrawal' && document.getElementById('inpUnpaidWithdrawal') && document.getElementById('inpUnpaidWithdrawal').checked);
@@ -1735,6 +1758,7 @@
             party: party,
             charge: (activeType === 'Deposit' || activeType === 'Withdrawal') ? fee : 0,
             chargeMode: (activeType === 'Expense' ? expMode : (activeType === 'BankLoad' ? transferDir : feeMode)),
+            feeCollection: (activeType === 'Deposit' || activeType === 'Withdrawal') ? feeMode : null,
             mobile: mobile,
             bank: bank,
             acc: acc,
@@ -1746,7 +1770,7 @@
 
         if (unpaid && activeType === 'Withdrawal') {
             database.unpaidWithdrawals = database.unpaidWithdrawals || [];
-            database.unpaidWithdrawals.unshift({id:newTx.id, amount:amt, fee:fee, party:party, mobile:mobile, bank:bank, acc:acc, rrn:rrn, date:newTx.date, time:newTx.time, status:'Unpaid'});
+            database.unpaidWithdrawals.unshift({id:newTx.id, amount:amt, fee:fee, feeDue:fee, party:party, mobile:mobile, bank:bank, acc:acc, rrn:rrn, date:newTx.date, time:newTx.time, status:'Unpaid', chargeMode:newTx.chargeMode, feeCollection:null, feeReceived:0, isoDate:newTx.isoDate});
         }
         database.transactions.unshift(newTx);
         database.allTransactionsHistory.unshift(newTx);
@@ -1766,63 +1790,85 @@
         return false;
     }
 
-    function recalculateAndRender() {
-        var mobBal = Number(database.openingMobile) || 0;
-        var cashBal = Number(database.openingCash) || 0;
-        var grossFee = 0;
-        var totalExp = 0;
-        var depVol = 0;
-        var withVol = 0;
-
-        database.transactions.forEach(function(tx) {
+    // SINGLE SOURCE OF TRUTH for all live balance calculations.
+    // Unpaid withdrawals are intentionally ignored until Mark Paid.
+    function calculateLedgerState(transactions, openingMobile, openingCash) {
+        var mobBal = Number(openingMobile) || 0;
+        var cashBal = Number(openingCash) || 0;
+        var grossFee = 0, totalExp = 0, depVol = 0, withVol = 0;
+        (transactions || []).forEach(function(tx) {
+            var amount = Number(tx.amount) || 0;
+            var charge = Number(tx.charge) || 0;
+            var feeCollection = tx.feeCollection || tx.chargeMode || 'Cash';
             if (tx.type === 'Deposit') {
-                mobBal -= tx.amount; cashBal += tx.amount; depVol += tx.amount; grossFee += tx.charge;
-                if (tx.chargeMode === 'Cash') cashBal += tx.charge; else mobBal += tx.charge;
+                mobBal -= amount; cashBal += amount; depVol += amount; grossFee += charge;
+                if (feeCollection === 'Cash') cashBal += charge;
+                else mobBal += charge; // UPI or amount deducted: bank receives net amount
             } else if (tx.type === 'Withdrawal') {
                 if (tx.status === 'Unpaid') return;
-                mobBal += tx.amount; cashBal -= tx.amount; withVol += tx.amount; grossFee += tx.charge;
-                if (tx.chargeMode === 'Cash') cashBal += tx.charge; else mobBal += tx.charge;
+                mobBal += amount; cashBal -= amount; withVol += amount; grossFee += charge;
+                if (feeCollection === 'Cash' || feeCollection === 'Deducted') cashBal += charge;
+                else mobBal += charge;
             } else if (tx.type === 'Expense') {
-                totalExp += tx.amount;
-                if (tx.chargeMode === 'Cash') cashBal -= tx.amount; else mobBal -= tx.amount;
+                totalExp += amount;
+                if (tx.chargeMode === 'Cash') cashBal -= amount; else mobBal -= amount;
             } else if (tx.type === 'BankLoad') {
-                if (tx.chargeMode === 'CashToBank') { cashBal -= tx.amount; mobBal += tx.amount; }
-                else { mobBal -= tx.amount; cashBal += tx.amount; }
+                if (tx.chargeMode === 'CashToBank') { cashBal -= amount; mobBal += amount; }
+                else { mobBal -= amount; cashBal += amount; }
             }
         });
+        return {
+            mobile: mobBal, cash: cashBal, total: mobBal + cashBal,
+            grossFee: grossFee, expenses: totalExp,
+            profit: grossFee - totalExp, depositVolume: depVol, withdrawalVolume: withVol
+        };
+    }
 
-        var totalVault = mobBal + cashBal;
-        var netProfit = grossFee - totalExp;
+    // Calculation audit helper: returns the exact ledger math without mutating data.
+    function auditCurrentLedger() {
+        var state = calculateLedgerState(database.transactions || [], database.openingMobile, database.openingCash);
+        return {
+            openingMobile: Number(database.openingMobile) || 0,
+            openingCash: Number(database.openingCash) || 0,
+            mobile: state.mobile, cash: state.cash, total: state.total,
+            grossFee: state.grossFee, expenses: state.expenses, profit: state.profit,
+            depositVolume: state.depositVolume, withdrawalVolume: state.withdrawalVolume,
+            unpaidCount: (database.unpaidWithdrawals || []).filter(function(x){ return x.status === 'Unpaid'; }).length,
+            unpaidAmount: (database.unpaidWithdrawals || []).filter(function(x){ return x.status === 'Unpaid'; }).reduce(function(a,x){ return a + (Number(x.amount)||0); }, 0)
+        };
+    }
 
-        document.getElementById('dispTotalVault').innerText = '₹' + totalVault.toLocaleString('en-IN');
+    function recalculateAndRender() {
+        var state = calculateLedgerState(database.transactions, database.openingMobile, database.openingCash);
+        var mobBal = state.mobile, cashBal = state.cash;
+
+        document.getElementById('dispTotalVault').innerText = '₹' + state.total.toLocaleString('en-IN');
         document.getElementById('dispMobileVault').innerText = '₹' + mobBal.toLocaleString('en-IN');
         document.getElementById('dispCashVault').innerText = '₹' + cashBal.toLocaleString('en-IN');
 
         var mobDiff = mobBal - (Number(database.openingMobile) || 0);
         var cashDiff = cashBal - (Number(database.openingCash) || 0);
-
         var mobDiffEl = document.getElementById('dispMobileNet');
         mobDiffEl.innerText = 'Net: ' + (mobDiff >= 0 ? '+' : '') + '₹' + mobDiff.toLocaleString('en-IN');
         mobDiffEl.className = 'badge-net ' + (mobDiff >= 0 ? 'text-emerald' : 'text-rose');
-
         var cashDiffEl = document.getElementById('dispCashNet');
         cashDiffEl.innerText = 'Net: ' + (cashDiff >= 0 ? '+' : '') + '₹' + cashDiff.toLocaleString('en-IN');
         cashDiffEl.className = 'badge-net ' + (cashDiff >= 0 ? 'text-emerald' : 'text-rose');
 
-        document.getElementById('dispTotalProfit').innerText = '₹' + netProfit.toLocaleString('en-IN');
-        document.getElementById('dispGrossFee').innerText = '₹' + grossFee.toLocaleString('en-IN');
-        document.getElementById('dispTotalExp').innerText = '₹' + totalExp.toLocaleString('en-IN');
-        document.getElementById('dispTotalDepVol').innerText = '₹' + depVol.toLocaleString('en-IN');
-        document.getElementById('dispTotalWithVol').innerText = '₹' + withVol.toLocaleString('en-IN');
+        document.getElementById('dispTotalProfit').innerText = '₹' + state.profit.toLocaleString('en-IN');
+        document.getElementById('dispGrossFee').innerText = '₹' + state.grossFee.toLocaleString('en-IN');
+        document.getElementById('dispTotalExp').innerText = '₹' + state.expenses.toLocaleString('en-IN');
+        document.getElementById('dispTotalDepVol').innerText = '₹' + state.depositVolume.toLocaleString('en-IN');
+        document.getElementById('dispTotalWithVol').innerText = '₹' + state.withdrawalVolume.toLocaleString('en-IN');
         document.getElementById('badgeEntryCount').innerText = database.transactions.length + ' entries';
 
-        var pending=(database.unpaidWithdrawals||[]).filter(function(x){return x.status==='Unpaid'});
-        var pendingTotal=pending.reduce(function(sum,x){return sum+Number(x.amount||0)},0);
-        var tag=document.getElementById('unpaidCountTag'); if(tag){ tag.innerText=pending.length; tag.style.display=pending.length>0?'flex':'none'; }
-        var unpaidBtn=document.querySelector('.btn-hub[onclick="openUnpaidModal()"]');
-        if(unpaidBtn) unpaidBtn.title='Unpaid Withdrawals: '+pending.length;
+        var pending = (database.unpaidWithdrawals || []).filter(function(x){ return x.status === 'Unpaid'; });
+        var tag = document.getElementById('unpaidCountTag');
+        if(tag){ tag.innerText = pending.length; tag.style.display = pending.length > 0 ? 'flex' : 'none'; }
+        var unpaidBtn = document.querySelector('.btn-hub[onclick="openUnpaidModal()"]');
+        if(unpaidBtn) unpaidBtn.title = 'Unpaid Withdrawals: ' + pending.length;
         renderRegisterFeed();
-        if(document.getElementById('modalUnpaid') && document.getElementById('modalUnpaid').style.display==='flex') renderUnpaidModal();
+        if(document.getElementById('modalUnpaid') && document.getElementById('modalUnpaid').style.display === 'flex') renderUnpaidModal();
     }
 
     function renderRegisterFeed() {
@@ -1853,8 +1899,55 @@
             else if (isLoad) pillClass = 'tag-transfer';
             else if (!isDep) pillClass = 'tag-with';
 
-            var mobText = isDep ? '-₹' + tx.amount : (isExp ? (tx.chargeMode === 'Online' ? '-₹' + tx.amount : '₹0') : (isLoad ? (tx.chargeMode === 'CashToBank' ? '+₹' + tx.amount : '-₹' + tx.amount) : (tx.status === 'Unpaid' ? '₹0' : '+₹' + tx.amount)));
-            var cashText = isDep ? '+₹' + tx.amount : (isExp ? (tx.chargeMode === 'Cash' ? '-₹' + tx.amount : '₹0') : (isLoad ? (tx.chargeMode === 'CashToBank' ? '-₹' + tx.amount : '+₹' + tx.amount) : (tx.status === 'Unpaid' ? '₹0' : '-₹' + tx.amount)));
+            // Transaction-list movement must mirror the same fee-mode accounting used by calculateBalances().
+            // For 'Deducted', the fee is retained from the transaction amount, so the customer-facing net
+            // amount is amount - fee while the ledger still records the full transaction amount and fee separately.
+            var txAmount = Number(tx.amount) || 0;
+            var txFee = Number(tx.charge) || 0;
+            var txFeeMode = tx.feeCollection || tx.chargeMode || 'Cash';
+            var isUnpaidWithdrawal = (!isDep && !isExp && !isLoad && tx.status === 'Unpaid');
+            var netAmount = Math.max(0, txAmount - txFee);
+            var mobValue = 0, cashValue = 0;
+
+            if (isUnpaidWithdrawal) {
+                mobValue = 0;
+                cashValue = 0;
+            } else if (isDep) {
+                cashValue = txAmount;
+                mobValue = -txAmount;
+                if (txFeeMode === 'Cash') cashValue += txFee;
+                else mobValue += txFee; // UPI fee or fee retained from deposit amount
+            } else if (isExp) {
+                cashValue = tx.chargeMode === 'Cash' ? -txAmount : 0;
+                mobValue = tx.chargeMode === 'Online' ? -txAmount : 0;
+            } else if (isLoad) {
+                if (tx.chargeMode === 'CashToBank') {
+                    cashValue = -txAmount;
+                    mobValue = txAmount;
+                } else {
+                    mobValue = -txAmount;
+                    cashValue = txAmount;
+                }
+            } else { // Withdrawal
+                mobValue = txAmount;
+                cashValue = -txAmount;
+                if (txFeeMode === 'Cash' || txFeeMode === 'Deducted') cashValue += txFee;
+                else mobValue += txFee;
+            }
+
+            function formatMovement(v) {
+                if (v > 0) return '+₹' + Math.abs(v).toLocaleString('en-IN');
+                if (v < 0) return '-₹' + Math.abs(v).toLocaleString('en-IN');
+                return '₹0';
+            }
+
+            var mobText = formatMovement(mobValue);
+            var cashText = formatMovement(cashValue);
+            var feeText = txFee > 0 ? '+₹' + txFee.toLocaleString('en-IN') : '₹0';
+            var netLabel = '';
+            if ((isDep || (!isDep && !isExp && !isLoad)) && txFeeMode === 'Deducted' && txFee > 0 && !isUnpaidWithdrawal) {
+                netLabel = `<div style="font-size:9px;color:var(--text-sub);margin-top:5px;grid-column:1/-1;">✂️ Fee ₹${txFee.toLocaleString('en-IN')} adjusted • Net ${isDep ? 'deposit' : 'cash paid'} ₹${netAmount.toLocaleString('en-IN')}</div>`;
+            }
 
             var card = document.createElement('div');
             card.className = 'card-txn';
@@ -1869,7 +1962,8 @@
                 <div class="breakdown-row mono">
                     <div><span style="color:var(--text-muted); font-size:9px; display:block;">MOBILE</span><b class="${mobText.startsWith('+') ? 'text-emerald' : (mobText.startsWith('-') ? 'text-rose' : '')}">${mobText}</b></div>
                     <div><span style="color:var(--text-muted); font-size:9px; display:block;">CASH</span><b class="${cashText.startsWith('+') ? 'text-emerald' : (cashText.startsWith('-') ? 'text-rose' : '')}">${cashText}</b></div>
-                    <div><span style="color:var(--text-muted); font-size:9px; display:block;">FEE</span><b class="text-emerald">+₹${tx.charge}</b></div>
+                    <div><span style="color:var(--text-muted); font-size:9px; display:block;">FEE</span><b class="${txFee > 0 ? 'text-emerald' : ''}">${feeText}</b></div>
+                    ${netLabel}
                 </div>
                 ${(tx.bank || tx.rrn || tx.acc) ? `
                 <div style="font-size:9.5px; color:var(--text-sub); display:flex; gap:8px; flex-wrap:wrap; padding-top:2px;">
@@ -1892,52 +1986,87 @@
         });
     }
 
+    var unpaidSettlementId = null;
+
     function markUnpaidPaid(id) {
         database.unpaidWithdrawals = database.unpaidWithdrawals || [];
         var u = database.unpaidWithdrawals.find(function(x) { return x && x.id === id; });
-        if (!u || u.status !== 'Unpaid') {
-            renderUnpaidModal();
-            return;
-        }
+        if (!u || u.status !== 'Unpaid') { renderUnpaidModal(); return; }
+        unpaidSettlementId = id;
+        var feeDue = Number(u.feeDue != null ? u.feeDue : u.fee) || 0;
+        var info = document.getElementById('unpaidSettleInfo');
+        if (info) info.innerHTML = '<b>' + (u.party || 'Customer') + '</b><br>Withdrawal: <b>₹' + (Number(u.amount)||0).toLocaleString('en-IN') + '</b> • Fee Due: <b>₹' + feeDue.toLocaleString('en-IN') + '</b><br><span style="color:var(--text-muted);">Choose how the fee was actually received.</span>';
+        openModal('modalUnpaidSettle');
+    }
 
-        // Find the original transaction in either live ledger or permanent history.
-        var tx = (database.transactions || []).find(function(x) { return x && x.id === id; });
-        if (!tx) tx = (database.allTransactionsHistory || []).find(function(x) { return x && x.id === id; });
+    function completeUnpaidSettlement(feeCollection) {
+        var id = unpaidSettlementId;
+        if (!id) return;
+        database.unpaidWithdrawals = database.unpaidWithdrawals || [];
+        var u = database.unpaidWithdrawals.find(function(x) { return x && x.id === id; });
+        if (!u || u.status !== 'Unpaid') { closeModal('modalUnpaidSettle'); return; }
 
-        // After Day Close some versions may have lost the transaction object from both arrays.
-        // Rebuild it from the persistent unpaid record so Mark Paid still works after restart.
-        if (!tx) {
-            tx = {
-                id: u.id, type: 'Withdrawal', amount: Number(u.amount)||0, party: u.party||'Customer',
-                charge: Number(u.fee)||0, chargeMode: u.chargeMode || 'Online', mobile:u.mobile||'',
-                bank:u.bank||'', acc:u.acc||'', rrn:u.rrn||'', date:u.date||new Date().toLocaleDateString('en-GB'),
-                time:u.time||'', isoDate:u.isoDate||new Date().toISOString().split('T')[0]
-            };
-        }
-
+        var amount = Number(u.amount) || 0;
+        var feeDue = Number(u.feeDue != null ? u.feeDue : u.fee) || 0;
+        var feeReceived = feeCollection === 'None' ? 0 : feeDue;
         var now = new Date();
+        var paidDate = now.toLocaleDateString('en-GB');
+        var paidTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        var tx = (database.transactions || []).find(function(x) { return x && x.id === id; });
+
+        if (tx) {
+            tx.status = 'Paid';
+            tx.paidDate = paidDate;
+            tx.paidTime = paidTime;
+            tx.charge = feeReceived;
+            tx.feeCollection = feeCollection === 'None' ? null : feeCollection;
+            tx.chargeMode = tx.feeCollection || tx.chargeMode || 'Cash';
+        } else {
+            // After Day Close the transaction is no longer in today's list. Apply only the
+            // actual settlement movement to the current opening balances; never re-add it.
+            var cashDelta = -amount;
+            var mobileDelta = amount;
+            if (feeCollection === 'Cash' || feeCollection === 'Deducted') cashDelta += feeReceived;
+            else if (feeCollection === 'Online') mobileDelta += feeReceived;
+            database.openingCash = (Number(database.openingCash) || 0) + cashDelta;
+            database.openingMobile = (Number(database.openingMobile) || 0) + mobileDelta;
+        }
+
+        var hist = (database.allTransactionsHistory || []).find(function(x) { return x && x.id === id; });
+        if (hist) {
+            hist.status = 'Paid';
+            hist.paidDate = paidDate;
+            hist.paidTime = paidTime;
+            hist.charge = feeReceived;
+            hist.feeCollection = feeCollection === 'None' ? null : feeCollection;
+            hist.chargeMode = hist.feeCollection || hist.chargeMode || 'Cash';
+            hist.feeDue = feeDue;
+            hist.feeReceived = feeReceived;
+        } else {
+            database.allTransactionsHistory = database.allTransactionsHistory || [];
+            database.allTransactionsHistory.unshift({
+                id:id, type:'Withdrawal', status:'Paid', amount:amount, party:u.party || 'Customer',
+                charge:feeReceived, feeDue:feeDue, feeReceived:feeReceived,
+                chargeMode:feeCollection === 'None' ? null : feeCollection,
+                feeCollection:feeCollection === 'None' ? null : feeCollection,
+                mobile:u.mobile || '', bank:u.bank || '', acc:u.acc || '', rrn:u.rrn || '',
+                date:u.date || paidDate, time:u.time || paidTime,
+                isoDate:u.isoDate || new Date().toISOString().split('T')[0], paidDate:paidDate, paidTime:paidTime
+            });
+        }
+
         u.status = 'Paid';
-        u.paidDate = now.toLocaleDateString('en-GB');
-        u.paidTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        tx.status = 'Paid';
-        tx.paidDate = u.paidDate;
-        tx.paidTime = u.paidTime;
-
-        // Keep the transaction in permanent history and add it to the current ledger
-        // if it was previously removed by Day Close.
-        database.allTransactionsHistory = database.allTransactionsHistory || [];
-        var histIndex = database.allTransactionsHistory.findIndex(function(x) { return x && x.id === id; });
-        if (histIndex >= 0) database.allTransactionsHistory[histIndex] = tx;
-        else database.allTransactionsHistory.unshift(tx);
-
-        var currentIndex = (database.transactions || []).findIndex(function(x) { return x && x.id === id; });
-        if (currentIndex >= 0) database.transactions[currentIndex] = tx;
-        else database.transactions.unshift(tx);
-
+        u.paidDate = paidDate;
+        u.paidTime = paidTime;
+        u.feeCollection = feeCollection === 'None' ? null : feeCollection;
+        u.feeReceived = feeReceived;
+        u.feeOutstanding = Math.max(0, feeDue - feeReceived);
         syncStorage();
+        closeModal('modalUnpaidSettle');
+        unpaidSettlementId = null;
         recalculateAndRender();
         renderUnpaidModal();
-        showToast('Unpaid Withdrawal Paid ✅');
+        showToast(feeCollection === 'None' ? 'Withdrawal Paid • Fee Pending ⏳' : 'Withdrawal + Fee Settled ✅');
     }
 
     function deleteUnpaidWithdrawal(id) {
@@ -1973,15 +2102,9 @@
         var dataPoints = [];
 
         // Aggregate today
-        var todayProf = 0, todayVol = 0;
-        database.transactions.forEach(function(t) {
-            if (t.type === 'Deposit' || t.type === 'Withdrawal') {
-                todayVol += t.amount;
-                todayProf += (t.charge || 0);
-            } else if (t.type === 'Expense') {
-                todayProf -= t.amount;
-            }
-        });
+        var todayState = calculateLedgerState(database.transactions, 0, 0);
+        var todayProf = todayState.profit;
+        var todayVol = todayState.depositVolume + todayState.withdrawalVolume;
 
         dataPoints.push({ label: 'Today', profit: Math.max(0, todayProf), vol: todayVol });
 
@@ -1993,7 +2116,7 @@
                 dataPoints.unshift({
                     label: shortDate,
                     profit: Math.max(0, arch.profit || 0),
-                    vol: (arch.volume || (arch.profit * 60) || 5000)
+                    vol: Number(arch.volume || 0)
                 });
             });
         }
@@ -2035,13 +2158,13 @@
     function openCustomerStatementModal(name) {
         currentStatementCustomer = name;
         var allTx = database.allTransactionsHistory || [];
-        var custTx = allTx.filter(function(t) { return t.party.toLowerCase() === name.toLowerCase(); });
+        var custTx = allTx.filter(function(t) { return t.party.toLowerCase() === name.toLowerCase() && !(t.type === 'Withdrawal' && t.status === 'Unpaid'); });
 
         var dep = 0, withD = 0, prof = 0;
         custTx.forEach(function(t) {
             if (t.type === 'Deposit') dep += t.amount;
             else if (t.type === 'Withdrawal') withD += t.amount;
-            prof += (t.charge || 0);
+            prof += (t.status === 'Unpaid' ? 0 : (t.charge || 0));
         });
 
         var custInfo = (database.savedCustomers || {})[name] || {};
@@ -2072,7 +2195,7 @@
     function shareCustomerStatementWhatsApp() {
         if (!currentStatementCustomer) return;
         var allTx = database.allTransactionsHistory || [];
-        var custTx = allTx.filter(function(t) { return t.party.toLowerCase() === currentStatementCustomer.toLowerCase(); });
+        var custTx = allTx.filter(function(t) { return t.party.toLowerCase() === currentStatementCustomer.toLowerCase() && !(t.type === 'Withdrawal' && t.status === 'Unpaid'); });
         if (custTx.length === 0) return;
 
         var dep = 0, withD = 0, listTxt = '';
@@ -2187,7 +2310,7 @@
         var allRecords = database.allTransactionsHistory || [];
         var filtered = allRecords.filter(function(t) {
             var d = t.isoDate || new Date().toISOString().split('T')[0];
-            return d >= sDate && d <= eDate;
+            return d >= sDate && d <= eDate && !(t.type === 'Withdrawal' && t.status === 'Unpaid');
         });
 
         if (filtered.length === 0) {
@@ -2256,48 +2379,36 @@
     }
 
     function closeDayAndArchive() {
-        if (confirm("Day close karein? Aaj ka closing balance agle din ka opening balance ban jayega.")) {
-            var mobBal = Number(database.openingMobile) || 0;
-            var cashBal = Number(database.openingCash) || 0;
-            var grossFee = 0, totalExp = 0, dayVolume = 0;
+        if (!confirm("Day close karein? Aaj ka closing balance agle din ka opening balance ban jayega.")) return;
 
-            database.transactions.forEach(function(tx) {
-                if (tx.type === 'Deposit') {
-                    mobBal -= tx.amount; cashBal += tx.amount; grossFee += tx.charge; dayVolume += tx.amount;
-                    if (tx.chargeMode === 'Cash') cashBal += tx.charge; else mobBal += tx.charge;
-                } else if (tx.type === 'Withdrawal') {
-                    mobBal += tx.amount; cashBal -= tx.amount; grossFee += tx.charge; dayVolume += tx.amount;
-                    if (tx.chargeMode === 'Cash') cashBal += tx.charge; else mobBal += tx.charge;
-                } else if (tx.type === 'Expense') {
-                    totalExp += tx.amount;
-                    if (tx.chargeMode === 'Cash') cashBal -= tx.amount; else mobBal -= tx.amount;
-                } else if (tx.type === 'BankLoad') {
-                    if (tx.chargeMode === 'CashToBank') { cashBal -= tx.amount; mobBal += tx.amount; }
-                    else { mobBal -= tx.amount; cashBal += tx.amount; }
-                }
-            });
+        // Use the same single-source calculation used by the live dashboard.
+        // Pending Unpaid withdrawals are ignored until they are actually settled.
+        var state = calculateLedgerState(database.transactions || [], database.openingMobile, database.openingCash);
 
-            database.archive = database.archive || [];
-            database.archive.unshift({
-                date: new Date().toLocaleDateString('en-IN'),
-                closingMobile: mobBal,
-                closingCash: cashBal,
-                profit: grossFee - totalExp,
-                volume: dayVolume,
-                count: database.transactions.length
-            });
+        database.archive = database.archive || [];
+        database.archive.unshift({
+            date: new Date().toLocaleDateString('en-IN'),
+            closingMobile: state.mobile,
+            closingCash: state.cash,
+            profit: state.profit,
+            volume: state.depositVolume + state.withdrawalVolume,
+            depositVolume: state.depositVolume,
+            withdrawalVolume: state.withdrawalVolume,
+            count: (database.transactions || []).length,
+            unpaidCount: (database.unpaidWithdrawals || []).filter(function(x){ return x.status === 'Unpaid'; }).length,
+            unpaidAmount: (database.unpaidWithdrawals || []).filter(function(x){ return x.status === 'Unpaid'; }).reduce(function(a,x){ return a + (Number(x.amount)||0); }, 0)
+        });
 
-            database.openingMobile = mobBal;
-            database.openingCash = cashBal;
-            database.transactions = [];
+        database.openingMobile = state.mobile;
+        database.openingCash = state.cash;
+        database.transactions = [];
 
-            document.getElementById('cfgMobile').value = mobBal;
-            document.getElementById('cfgCash').value = cashBal;
+        document.getElementById('cfgMobile').value = state.mobile;
+        document.getElementById('cfgCash').value = state.cash;
 
-            syncStorage();
-            recalculateAndRender();
-            showToast('Day Closed & Balances Rolled Over! 🎉');
-        }
+        syncStorage();
+        recalculateAndRender();
+        showToast('Day Closed & Balances Rolled Over! 🎉');
     }
 
     function renderArchive() {
@@ -2312,42 +2423,27 @@
             card.style.cssText = 'background:var(--surface-card); padding:10px; border-radius:8px; margin-bottom:8px; border:1px solid var(--border-light); font-size:11px;';
             card.innerHTML = `
                 <div style="display:flex; justify-content:space-between;"><b>📅 ${item.date}</b><b class="text-emerald">+₹${item.profit} Profit</b></div>
-                <div style="color:var(--text-sub); margin-top:2px;">Mobile: ₹${item.closingMobile.toLocaleString('en-IN')} | Cash: ₹${item.closingCash.toLocaleString('en-IN')} (${item.count} Txns)</div>
+                <div style="color:var(--text-sub); margin-top:2px;">Mobile: ₹${item.closingMobile.toLocaleString('en-IN')} | Cash: ₹${item.closingCash.toLocaleString('en-IN')} (${item.count} Txns)${item.unpaidCount ? ' • 🟠 Unpaid: ' + item.unpaidCount : ''}</div>
             `;
             feed.appendChild(card);
         });
     }
 
     function shareWhatsAppDailySummary() {
-        var mobBal = Number(database.openingMobile) || 0;
-        var cashBal = Number(database.openingCash) || 0;
-        var grossFee = 0, totalExp = 0;
-
-        database.transactions.forEach(function(tx) {
-            if (tx.type === 'Deposit') {
-                mobBal -= tx.amount; cashBal += tx.amount; grossFee += tx.charge;
-                if (tx.chargeMode === 'Cash') cashBal += tx.charge; else mobBal += tx.charge;
-            } else if (tx.type === 'Withdrawal') {
-                mobBal += tx.amount; cashBal -= tx.amount; grossFee += tx.charge;
-                if (tx.chargeMode === 'Cash') cashBal += tx.charge; else mobBal += tx.charge;
-            } else if (tx.type === 'Expense') {
-                totalExp += tx.amount;
-                if (tx.chargeMode === 'Cash') cashBal -= tx.amount; else mobBal -= tx.amount;
-            } else if (tx.type === 'BankLoad') {
-                if (tx.chargeMode === 'CashToBank') { cashBal -= tx.amount; mobBal += tx.amount; }
-                else { mobBal -= tx.amount; cashBal += tx.amount; }
-            }
-        });
-
+        var state = calculateLedgerState(database.transactions || [], database.openingMobile, database.openingCash);
+        var pending = (database.unpaidWithdrawals || []).filter(function(x){ return x.status === 'Unpaid'; });
+        var pendingAmount = pending.reduce(function(a,x){ return a + (Number(x.amount)||0); }, 0);
         var msg = '*📊 AMAR BANKING DAILY CSP SUMMARY (%2B' + new Date().toLocaleDateString('en-IN') + ')*%0A%0A' +
-                    '📱 *Mobile Vault:* ₹' + mobBal.toLocaleString('en-IN') + '%0A' +
-                    '💵 *Cash Vault:* ₹' + cashBal.toLocaleString('en-IN') + '%0A' +
-                    '💰 *Total Vault:* ₹' + (mobBal + cashBal).toLocaleString('en-IN') + '%0A' +
-                    '⚡ *Net Profit:* ₹' + (grossFee - totalExp).toLocaleString('en-IN') + '%0A' +
-                    '💸 *Expenses:* ₹' + totalExp.toLocaleString('en-IN') + '%0A' +
-                    '📝 *Total Entries:* ' + database.transactions.length + '%0A%0A' +
-                    '_Amar Banking Pro_';
-
+                    '📱 *Mobile Vault:* ₹' + state.mobile.toLocaleString('en-IN') + '%0A' +
+                    '💵 *Cash Vault:* ₹' + state.cash.toLocaleString('en-IN') + '%0A' +
+                    '💰 *Total Vault:* ₹' + state.total.toLocaleString('en-IN') + '%0A' +
+                    '⚡ *Net Profit:* ₹' + state.profit.toLocaleString('en-IN') + '%0A' +
+                    '💸 *Expenses:* ₹' + state.expenses.toLocaleString('en-IN') + '%0A' +
+                    '📥 *Deposit Volume:* ₹' + state.depositVolume.toLocaleString('en-IN') + '%0A' +
+                    '📤 *Withdrawal Volume:* ₹' + state.withdrawalVolume.toLocaleString('en-IN') + '%0A' +
+                    '📝 *Total Entries:* ' + (database.transactions || []).length + '%0A' +
+                    (pending.length ? '🟠 *Unpaid Pending:* ' + pending.length + ' (₹' + pendingAmount.toLocaleString('en-IN') + ')%0A' : '') +
+                    '%0A_Amar Banking Pro_';
         window.open('https://wa.me/?text=' + msg, '_blank');
     }
 
