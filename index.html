@@ -1,0 +1,2898 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Amar Banking Pro - Smart Ledger & Analytics</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-card: #f1f5f9;
+            --surface-elevated: #e2e8f0;
+            --border: #cbd5e1;
+            --border-light: rgba(0, 0, 0, 0.08);
+            
+            --primary: #2563eb;
+            --primary-glow: rgba(37, 99, 235, 0.25);
+            --primary-gradient: linear-gradient(135deg, #2563eb, #1d4ed8);
+            
+            --emerald: #059669;
+            --emerald-glow: rgba(5, 150, 105, 0.2);
+            --rose: #e11d48;
+            --rose-glow: rgba(225, 29, 72, 0.2);
+            --amber: #d97706;
+            --amber-glow: rgba(217, 119, 6, 0.2);
+            --indigo: #4f46e5;
+            --cyan: #0891b2;
+            
+            --text-main: #0f172a;
+            --text-sub: #475569;
+            --text-muted: #64748b;
+            
+            --radius-xl: 20px;
+            --radius-lg: 14px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+        }
+
+        body.dark-mode {
+            --bg: #050811;
+            --surface: #0d1322;
+            --surface-card: #131b2e;
+            --surface-elevated: #1a253e;
+            --border: #24324f;
+            --border-light: rgba(255, 255, 255, 0.07);
+            
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.35);
+            --primary-gradient: linear-gradient(135deg, #2563eb, #1d4ed8);
+            
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.3);
+            --rose: #f43f5e;
+            --rose-glow: rgba(244, 63, 94, 0.3);
+            --amber: #f59e0b;
+            --amber-glow: rgba(245, 158, 11, 0.3);
+            --indigo: #6366f1;
+            --cyan: #06b6d4;
+            
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding: 12px;
+            padding-bottom: 120px;
+            min-height: 100vh;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+
+        body.modal-open {
+            overflow: hidden !important;
+            height: 100vh !important;
+            touch-action: none;
+        }
+
+        .mono { font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; font-variant-numeric: tabular-nums; letter-spacing: -0.2px; }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 2px 14px 2px;
+        }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo-wrapper {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 20px;
+            color: #fff;
+            box-shadow: 0 4px 16px var(--primary-glow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .brand-logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .brand-name {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-tag {
+            font-size: 10px;
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chip-date {
+            background: var(--surface-card);
+            border: 1px solid var(--border-light);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-sub);
+        }
+
+        .vault-hero {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode .vault-hero {
+            background: linear-gradient(145deg, #151f36 0%, #0c1220 100%);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .vault-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-sub);
+            font-weight: 700;
+        }
+
+        .btn-settings-gear {
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .vault-main-amt {
+            font-size: 30px;
+            font-weight: 800;
+            margin: 6px 0 14px 0;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .vault-dual-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .vault-sub-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .vault-sub-val {
+            font-size: 17px;
+            font-weight: 800;
+            margin-top: 2px;
+        }
+
+        .badge-net {
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .card-stat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-stat.profit-highlight {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.02));
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 10.5px;
+            color: var(--text-sub);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .stat-val {
+            font-size: 16px;
+            font-weight: 800;
+            margin-top: 2px;
+        }
+
+        .text-emerald { color: var(--emerald); }
+        .text-rose { color: var(--rose); }
+        .text-amber { color: var(--amber); }
+        .text-cyan { color: var(--cyan); }
+        .text-indigo { color: var(--indigo); }
+
+        .quick-action-bar {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .btn-hub {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 10px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-sub);
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+            transition: all 0.15s;
+        }
+
+        .btn-hub:active {
+            background: var(--surface-elevated);
+            color: var(--text-main);
+            transform: scale(0.96);
+        }
+
+        .badge-counter { position:absolute; top:-11px; left:50%; transform:translateX(-50%); min-width:19px; height:19px; padding:0 5px; box-sizing:border-box; display:none; align-items:center; justify-content:center; background:var(--rose); color:#fff; border:2px solid var(--surface); font-size:9px; line-height:1; font-weight:800; border-radius:999px; z-index:20; box-shadow:0 2px 6px rgba(0,0,0,.18); }
+
+        .entry-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .type-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            background: var(--surface-card);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            margin-bottom: 14px;
+        }
+
+        .tab-btn {
+            padding: 8px 2px;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-size: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-sub);
+            text-align: center;
+            transition: all 0.15s;
+        }
+
+        .tab-btn.active-dep { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 2px 10px var(--emerald-glow); }
+        .tab-btn.active-with { background: linear-gradient(135deg, #f43f5e, #e11d48); color: #fff; box-shadow: 0 2px 10px var(--rose-glow); }
+        .tab-btn.active-exp { background: linear-gradient(135deg, #a855f7, #9333ea); color: #fff; }
+        .tab-btn.active-transfer { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; }
+
+        .form-grid {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, select {
+            width: 100%;
+            height: 44px;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 8px 12px;
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            background: var(--surface);
+        }
+
+        .chip-fee-row {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .chip-fee {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            padding: 3px 6px;
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-sub);
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+
+        .chip-fee:active {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-toggle-extra {
+            background: rgba(37, 99, 235, 0.08);
+            border: 1px dashed rgba(37, 99, 235, 0.4);
+            color: var(--primary);
+            width: 100%;
+            padding: 9px;
+            border-radius: var(--radius-md);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 10px;
+            text-align: center;
+            display: block;
+        }
+
+        .extra-box {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .btn-main-submit {
+            width: 100%;
+            height: 46px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 16px var(--primary-glow);
+            transition: transform 0.1s;
+        }
+
+        .btn-main-submit:active {
+            transform: scale(0.98);
+        }
+
+        .feed-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        }
+
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .search-field {
+            width: 100%;
+            height: 40px;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 6px 12px;
+            color: var(--text-main);
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .card-txn {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .card-txn-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .party-name {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .txn-meta {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .tag-pill {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .tag-dep { background: rgba(16, 185, 129, 0.15); color: var(--emerald); }
+        .tag-with { background: rgba(244, 63, 94, 0.15); color: var(--rose); }
+        .tag-exp { background: rgba(168, 85, 247, 0.15); color: #9333ea; }
+        .tag-transfer { background: rgba(99, 102, 241, 0.15); color: #4f46e5; }
+
+        body.dark-mode .tag-exp { color: #c084fc; }
+        body.dark-mode .tag-transfer { color: #818cf8; }
+
+        .breakdown-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            background: var(--surface-elevated);
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 10.5px;
+        }
+
+        .actions-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+            padding-top: 6px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .btn-action-small {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .btn-act-slip { background: rgba(37, 99, 235, 0.12); border-color: rgba(37, 99, 235, 0.3); color: var(--primary); }
+        .btn-act-history { background: rgba(8, 145, 178, 0.12); border-color: rgba(8, 145, 178, 0.3); color: var(--cyan); }
+        .btn-act-dispute { background: rgba(217, 119, 6, 0.12); border-color: rgba(217, 119, 6, 0.3); color: var(--amber); }
+        .btn-act-del { background: rgba(225, 29, 72, 0.12); border-color: rgba(225, 29, 72, 0.3); color: var(--rose); }
+        .unpaid-toggle-row {
+            margin-top: 7px;
+            padding: 7px 10px;
+            border: 1px solid rgba(245, 158, 11, 0.28);
+            background: rgba(245, 158, 11, 0.07);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            min-height: 34px;
+            box-sizing: border-box;
+        }
+        .unpaid-toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.2;
+            cursor: pointer;
+        }
+        .unpaid-toggle-label input {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 34px;
+            height: 20px;
+            min-width: 34px;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: 1px solid #f59e0b !important;
+            border-radius: 999px !important;
+            background: #fff7ed !important;
+            position: relative;
+            cursor: pointer;
+            box-shadow: none !important;
+        }
+        .unpaid-toggle-label input::after {
+            content: '';
+            position: absolute;
+            width: 14px; height: 14px;
+            left: 2px; top: 2px;
+            border-radius: 50%;
+            background: #f59e0b;
+            transition: transform .15s ease;
+        }
+        .unpaid-toggle-label input:checked { background: #f59e0b !important; }
+        .unpaid-toggle-label input:checked::after {
+            background: #fff;
+            transform: translateX(14px);
+        }
+        .unpaid-help { font-size: 9px; color: var(--text-muted); white-space: nowrap; }
+        .unpaid-modal-total {
+            background: rgba(245,158,11,.10);
+            border: 1px solid rgba(245,158,11,.25);
+            border-radius: 9px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .unpaid-item {
+            background: var(--surface-card);
+            border: 1px solid var(--border-light);
+            border-radius: 9px;
+            padding: 10px;
+            margin-bottom: 7px;
+        }
+        .unpaid-item-top { display:flex; justify-content:space-between; gap:8px; align-items:flex-start; }
+        .unpaid-item-name { font-size: 11.5px; font-weight: 800; color: var(--text-main); }
+        .unpaid-item-amt { font-size: 13px; font-weight: 800; color: #d97706; white-space: nowrap; }
+        .unpaid-item-meta { font-size: 9.5px; color: var(--text-sub); margin-top: 3px; line-height: 1.45; }
+        .unpaid-item-actions { display:flex; gap:6px; margin-top:8px; }
+        .unpaid-item-actions button { flex:1; min-height:32px; }
+        .btn-mark-paid { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.3); color: #059669; }
+        .btn-unpaid-delete { background: rgba(225,29,72,.10); border-color: rgba(225,29,72,.25); color: var(--rose); }
+        .tx-action-group { display:flex; gap:5px; align-items:center; flex-wrap:wrap; }
+        .tx-action-group-right { display:flex; gap:5px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+        .btn-mark-paid-feed { background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.3); color:#b45309; }
+
+        /* Modal Overlay & Safe Area Padding */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(6px);
+            z-index: 999;
+            align-items: flex-end;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .modal-backdrop.active { display: flex; }
+
+        .modal-drawer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-radius: 24px 24px 0 0;
+            width: 100%;
+            padding: 20px 20px calc(80px + env(safe-area-inset-bottom, 20px)) 20px;
+            max-height: 85vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+            animation: slideSheet 0.2s ease-out;
+            box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes slideSheet {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .btn-close-modal {
+            float: right;
+            background: var(--surface-card);
+            border: none;
+            color: var(--text-main);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .dispute-item-card {
+            background: var(--surface-card);
+            border: 1px solid rgba(225, 29, 72, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        /* Pure CSS Offline Bar Chart Styles */
+        .chart-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .chart-bars-wrap {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 6px;
+            height: 140px;
+            padding-top: 20px;
+            padding-bottom: 24px;
+            position: relative;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .chart-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        .chart-bar {
+            width: 100%;
+            max-width: 28px;
+            background: linear-gradient(180deg, var(--primary), #1d4ed8);
+            border-radius: 6px 6px 2px 2px;
+            min-height: 4px;
+            transition: height 0.4s ease;
+            position: relative;
+        }
+
+        .chart-bar.highlight {
+            background: linear-gradient(180deg, var(--emerald), #047857);
+        }
+
+        .chart-val-popup {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--text-main);
+            white-space: nowrap;
+        }
+
+        .chart-lbl {
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .theme-toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 12px;
+        }
+
+        .toggle-switch-box {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+        }
+
+        .toggle-switch-box input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: 0.3s;
+            border-radius: 30px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+
+        .toast-bubble {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            display: none;
+            z-index: 2000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #receiptCard, #receiptCard * { visibility: visible; }
+            #receiptCard { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none !important; border: 1px solid #ccc !important; }
+        }
+
+
+        /* ===== V19 CUSTOMER DETAILS FORM POLISH ===== */
+        #btnToggleExtra {
+            min-height: 44px;
+            padding: 10px 12px;
+            line-height: 1.25;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: normal;
+        }
+        #extraSection {
+            padding: 13px;
+            overflow: hidden;
+        }
+        #extraSection .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin: 0 0 10px;
+        }
+        #extraSection .form-grid:last-child { margin-bottom: 0; }
+        #extraSection .input-group {
+            min-width: 0;
+            gap: 5px;
+            background: rgba(37,99,235,.045);
+            border: 1px solid rgba(100,116,139,.22);
+            border-radius: 14px;
+            padding: 9px;
+            box-sizing: border-box;
+        }
+        #extraSection .input-group label {
+            min-height: 22px;
+            display: flex;
+            align-items: flex-end;
+            font-size: 9px;
+            line-height: 1.2;
+            letter-spacing: .25px;
+            text-transform: none;
+            white-space: normal;
+        }
+        #extraSection .input-group input {
+            width: 100%;
+            min-width: 0;
+            height: 44px;
+            min-height: 44px;
+            padding: 9px 11px;
+            border: 1.5px solid #94a3b8 !important;
+            border-radius: 11px !important;
+            background: #fff;
+            font-size: 13px;
+            line-height: 1.2;
+            box-sizing: border-box;
+            outline: none;
+        }
+        #extraSection .input-group input:focus {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+        }
+        body.dark-mode #extraSection .input-group {
+            background: rgba(59,130,246,.08);
+            border-color: rgba(148,163,184,.25);
+        }
+        body.dark-mode #extraSection .input-group input {
+            background: #0f172a;
+            color: #f8fafc;
+            border-color: #64748b !important;
+        }
+        #extraSection .input-group input::placeholder {
+            font-size: 11px;
+            opacity: .72;
+        }
+        @media (max-width: 360px) {
+            #extraSection { padding: 10px; }
+            #extraSection .form-grid { gap: 8px; }
+            #extraSection .input-group input { font-size: 12px; padding: 8px; }
+            #extraSection .input-group input::placeholder { font-size: 10px; }
+            #extraSection .input-group label { font-size: 8.5px; }
+        }
+        @media (max-width: 300px) {
+            #extraSection .form-grid { grid-template-columns: 1fr; }
+            #extraSection .input-group label { min-height: auto; }
+        }
+
+        /* ===== V18 MODERN LEDGER SKIN ===== */
+        body { max-width: 760px; margin: 0 auto; padding: 14px 12px 130px; background: radial-gradient(circle at 15% 0%, rgba(37,99,235,.10), transparent 30%), var(--bg); }
+        .app-header { padding: 8px 4px 16px; }
+        .brand-logo-wrapper { width:48px;height:48px;border-radius:16px;box-shadow:0 8px 24px var(--primary-glow); }
+        .brand-name { font-size:18px; }
+        .brand-tag { font-size:9.5px; letter-spacing:.3px; }
+        .vault-hero { border:none; border-radius:26px; padding:20px; background:linear-gradient(145deg,#101a33,#172a50 55%,#1d4ed8); color:#fff; box-shadow:0 18px 40px rgba(37,99,235,.22); }
+        .vault-hero .vault-head,.vault-hero .vault-sub-label,.vault-hero .badge-net { color:rgba(255,255,255,.72)!important; }
+        .vault-hero .vault-main-amt,.vault-hero .vault-sub-val { color:#fff; }
+        .vault-dual-grid { border-top:1px solid rgba(255,255,255,.15); }
+        .btn-settings-gear { color:#fff;background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.18); }
+        .analytics-grid { gap:10px; }
+        .card-stat { border:none; border-radius:18px; box-shadow:0 8px 24px rgba(15,23,42,.06); }
+        .card-stat.profit-highlight { border:1px solid rgba(16,185,129,.25); }
+        .quick-action-bar { grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+        .btn-hub { min-height:68px; border:none; border-radius:18px; background:linear-gradient(180deg,var(--surface),var(--surface-card)); box-shadow:0 7px 18px rgba(15,23,42,.07); }
+        .entry-container,.feed-container { border:none; border-radius:24px; box-shadow:0 10px 28px rgba(15,23,42,.06); padding:18px; }
+        .type-tabs { grid-template-columns:repeat(5,1fr); background:var(--surface-card); padding:5px; border-radius:17px; gap:5px; }
+        .tab-btn { border-radius:13px; border:none; min-height:42px; font-size:10px; }
+        .tab-btn.active-dep,.tab-btn.active-with,.tab-btn.active-exp,.tab-btn.active-transfer,.tab-btn.active-loan { box-shadow:0 5px 12px rgba(15,23,42,.12); }
+        .tab-btn.active-loan { background: linear-gradient(135deg, #f59e0b, #d97706); color:#fff; box-shadow:0 5px 14px rgba(245,158,11,.28); }
+        body.dark-mode .tab-btn.active-loan { background: linear-gradient(135deg, #f59e0b, #b45309); color:#fff; box-shadow:0 5px 16px rgba(245,158,11,.34); }
+        .input-group input,.input-group select,.search-field { border:none!important; background:var(--surface-card)!important; border-radius:14px!important; min-height:44px; }
+        .btn-toggle-extra { border:none; background:var(--surface-card); border-radius:13px; }
+        .btn-main-submit { border-radius:15px; }
+        .card-txn { border:none; border-radius:18px; background:linear-gradient(180deg,var(--surface),var(--surface-card)); box-shadow:0 6px 18px rgba(15,23,42,.06); padding:14px; }
+        .breakdown-row { border-radius:12px; border:1px solid var(--border-light); }
+        .modal-drawer { border-radius:28px 28px 0 0; padding:22px 18px calc(80px + env(safe-area-inset-bottom,20px)); }
+        .details-kicker { font-size:9px; letter-spacing:1.5px; color:var(--primary); font-weight:900; margin-bottom:4px; }
+        .details-subtitle { color:var(--text-sub); font-size:10.5px; margin-bottom:12px; }
+        .details-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .detail-cell { background:var(--surface-card); border:1px solid var(--border-light); border-radius:14px; padding:10px; min-width:0; }
+        .detail-cell.full { grid-column:1/-1; }
+        .detail-label { font-size:8px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; font-weight:800; }
+        .detail-value { font-size:11px; font-weight:800; margin-top:3px; word-break:break-word; }
+        .clickable-txn { cursor:pointer; }
+        .clickable-txn:active { transform:scale(.99); }
+        .due-summary { background:linear-gradient(135deg,rgba(245,158,11,.14),rgba(245,158,11,.04)); border:1px solid rgba(245,158,11,.25); border-radius:17px; padding:13px; }
+        .due-card { background:var(--surface-card); border:1px solid var(--border-light); border-radius:17px; padding:13px; margin-bottom:8px; }
+        .due-actions { display:flex;gap:6px;margin-top:9px; }
+        .due-actions button { flex:1;min-height:34px; }
+        .pending-transfer-card { background:var(--surface-card);border:1px solid rgba(245,158,11,.25);border-radius:17px;padding:13px;margin-bottom:8px; }
+        @media(max-width:430px){ .type-tabs{grid-template-columns:repeat(5,minmax(0,1fr));}.tab-btn{font-size:8.5px;padding:0 2px;} .quick-action-bar{grid-template-columns:repeat(4,1fr);} }
+        .quick-action-bar .btn-hub:has(+ .btn-hub) { min-width:0; }
+    </style>
+</head>
+<body>
+
+    <input type="file" id="logoUploadInput" accept="image/*" style="display: none;" onchange="handleLogoUpload(event)">
+    <input type="file" id="jsonRestoreInput" accept=".json" style="display: none;" onchange="handleJsonRestore(event)">
+
+    <div class="app-header">
+        <div class="brand-box">
+            <div class="brand-logo-wrapper" id="brandLogoWrapper">
+                <img id="headerLogoImg" class="brand-logo-img" alt="Logo">
+                <span id="headerLogoText">A</span>
+            </div>
+            <div>
+                <div class="brand-name">Amar Banking Pro</div>
+                <div class="brand-tag">Smart CSP Hub & Digital Ledger</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div class="chip-date" id="liveDateChip">Today</div>
+        </div>
+    </div>
+
+    <div class="vault-hero">
+        <div class="vault-head">
+            <span>Combined Total Vault</span>
+            <button type="button" class="btn-settings-gear" onclick="openModal('modalSettings')">⚙️ Vault Setup</button>
+        </div>
+        <div class="vault-main-amt mono" id="dispTotalVault">₹0</div>
+
+        <div class="vault-dual-grid">
+            <div>
+                <div class="vault-sub-label">📱 Mobile / UPI Vault</div>
+                <div class="vault-sub-val mono" id="dispMobileVault">₹0</div>
+                <div class="badge-net text-emerald" id="dispMobileNet">Diff: ₹0</div>
+            </div>
+            <div>
+                <div class="vault-sub-label">💵 Cash Vault</div>
+                <div class="vault-sub-val mono" id="dispCashVault">₹0</div>
+                <div class="badge-net text-emerald" id="dispCashNet">Diff: ₹0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="analytics-grid">
+        <div class="card-stat profit-highlight">
+            <div>
+                <div class="stat-label text-emerald">Net Earned Profit</div>
+                <div class="stat-val text-emerald mono" style="font-size: 22px;" id="dispTotalProfit">₹0</div>
+                <div style="font-size: 10px; color: var(--text-sub); margin-top: 2px;">
+                    Gross Fee: <b id="dispGrossFee">₹0</b> | Expenses: <b class="text-rose" id="dispTotalExp">₹0</b>
+                </div>
+            </div>
+            <div style="font-size: 28px;">⚡</div>
+        </div>
+        <div class="card-stat">
+            <div class="stat-label">Deposit Vol</div>
+            <div class="stat-val text-emerald mono" id="dispTotalDepVol">₹0</div>
+        </div>
+        <div class="card-stat">
+            <div class="stat-label">Withdrawal Vol</div>
+            <div class="stat-val text-rose mono" id="dispTotalWithVol">₹0</div>
+        </div>
+    </div>
+
+    <div class="quick-action-bar">
+        <div class="btn-hub" onclick="openModal('modalAnalytics')">
+            <span style="font-size: 16px;">📊</span>
+            <span>Trends</span>
+        </div>
+        <div class="btn-hub" onclick="openModal('modalDisputes')">
+            <span style="font-size: 16px;">⚠️</span>
+            <span>Disputes</span>
+            <span class="badge-counter" id="disputeCountTag">0</span>
+        </div>
+        <div class="btn-hub" onclick="openModal('modalReport')">
+            <span style="font-size: 16px;">📅</span>
+            <span>Filter</span>
+        </div>
+        <div class="btn-hub" onclick="openModal('modalHistory')">
+            <span style="font-size: 16px;">📜</span>
+            <span>History</span>
+        </div>
+        <div class="btn-hub" onclick="openUnpaidModal()"><span style="font-size:16px;">🟠</span><span>Unpaid</span><span class="badge-counter" id="unpaidCountTag">0</span></div>
+        <div class="btn-hub" onclick="openPendingTransferModal()"><span style="font-size:16px;">⏳</span><span>Transfer Due</span><span class="badge-counter" id="pendingTransferCountTag">0</span></div>
+        <div class="btn-hub" onclick="openUdharModal()"><span style="font-size:16px;">🤝</span><span>Udhar</span><span class="badge-counter" id="udharCountTag">0</span></div>
+        <div class="btn-hub" onclick="exportCompleteBackupJSON()"><span style="font-size:16px;">💾</span><span>Backup</span></div>
+    </div>
+
+    <div class="entry-container">
+        <div class="type-tabs">
+            <button type="button" class="tab-btn active-dep" id="btnTabDep" onclick="setMode('Deposit')">Deposit</button>
+            <button type="button" class="tab-btn" id="btnTabWith" onclick="setMode('Withdrawal')">Withdraw</button>
+            <button type="button" class="tab-btn" id="btnTabExp" onclick="setMode('Expense')">Expense</button>
+            <button type="button" class="tab-btn" id="btnTabTransfer" onclick="setMode('BankLoad')">↔️ Cash ↔ UPI</button>
+            <button type="button" class="tab-btn" id="btnTabUdhar" onclick="setMode('Udhar')">🤝 Udhar</button>
+        </div>
+
+        <form id="mainEntryForm" onsubmit="handleSaveEntry(event)">
+            <input type="hidden" id="editEntryId" value="">
+
+            <div class="form-grid">
+                <div class="input-group" style="flex: 1.2;">
+                    <label>Amount (₹)</label>
+                    <input type="number" id="inpAmount" placeholder="e.g. 5000" required inputmode="numeric" oninput="autoSuggestFee()">
+                </div>
+                <div class="input-group">
+                    <label id="lblParty">Customer / Note</label>
+                    <input type="text" id="inpParty" placeholder="Name" onchange="autoFillCustomerInfo(this.value)">
+                </div>
+            </div>
+
+            <button type="button" class="btn-toggle-extra" id="btnToggleExtra" onclick="toggleExtraSection()">
+                ➕ Add Customer Details (Bank, ID, Mobile, RRN)
+            </button>
+
+            <div class="extra-box" id="extraSection">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Mobile Number</label>
+                        <input type="tel" id="inpCustMobile" placeholder="10-digit Mobile" maxlength="10" inputmode="numeric">
+                    </div>
+                    <div class="input-group">
+                        <label>Bank Name</label>
+                        <input type="text" id="inpCustBank" placeholder="e.g. SBI, PNB">
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Customer ID / Account No.</label>
+                        <input type="text" id="inpCustAcc" placeholder="Account No. / ID" maxlength="18" inputmode="numeric">
+                    </div>
+                    <div class="input-group">
+                        <label>RRN / Reference No.</label>
+                        <input type="text" id="inpCustRrn" placeholder="e.g. 420912389102">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-grid" id="udharRow" style="display: none;">
+                <div class="input-group" style="grid-column:1/-1;">
+                    <label>Paisa Kis Mein Diya?</label>
+                    <select id="inpUdharMode">
+                        <option value="Cash">💵 Cash</option>
+                        <option value="Online">📱 UPI / Mobile</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid" id="transferRow" style="display: none;">
+                <div class="input-group">
+                    <label>Cash ↔ UPI Direction</label>
+                    <select id="inpTransferDir">
+                        <option value="BankToCash">📱 UPI → Cash</option>
+                        <option value="CashToBank">💵 Cash → UPI</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Transaction Status</label>
+                    <select id="inpTransferStatus">
+                        <option value="Complete">✅ Complete</option>
+                        <option value="Pending">⏳ Pending</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid" id="feeRow">
+                <div class="input-group" style="flex: 1.1;">
+                    <label>Charge / Fee (₹)</label>
+                    <input type="number" id="inpCharge" value="0" inputmode="numeric">
+                    <div class="chip-fee-row">
+                        <span class="chip-fee" onclick="setFeeQuick(10)">+10</span>
+                        <span class="chip-fee" onclick="setFeeQuick(20)">+20</span>
+                        <span class="chip-fee" onclick="setFeeQuick(50)">+50</span>
+                        <span class="chip-fee" onclick="setFeeQuick(100)">+100</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Fee Kaise Liya?</label>
+                    <select id="inpChargeMode">
+                        <option value="Cash">💵 Cash Se</option>
+                        <option value="Online">📱 UPI Se</option>
+                        <option value="Deducted">✂️ Amount Mein Se Kaat Kar</option>
+                    </select>
+                    <div style="font-size:9px;color:var(--text-muted);margin-top:4px;line-height:1.3;">Deposit: bank amount se fee adjust • Withdrawal: customer ko net cash</div>
+                </div>
+            </div>
+
+            <div class="form-grid" id="expRow" style="display: none;">
+                <div class="input-group">
+                    <label>Kharcha Kis Se Diya?</label>
+                    <select id="inpExpMode">
+                        <option value="Cash">💵 Cash Se Diya (-Cash)</option>
+                        <option value="Online">📱 UPI / Mobile Se Diya (-Mobile)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-main-submit" id="btnSubmitForm">+ Record Transaction</button>
+        </form>
+    </div>
+
+    <div class="feed-container">
+        <div class="feed-header">
+            <div><div style="font-size: 14px; font-weight: 900;">Today's Register</div><div style="font-size: 9px;color:var(--text-muted);margin-top:2px;">Tap any transaction to open full details</div></div>
+            <div style="font-size: 11px; color: var(--text-sub);" id="badgeEntryCount">0 entries</div>
+        </div>
+
+        <input type="text" class="search-field" id="searchInp" placeholder="🔍 Search customer, bank, ID, RRN or amount..." oninput="renderRegisterFeed()">
+
+        <div id="txList">
+            <div class="empty-state">No entries recorded yet today.</div>
+        </div>
+
+        <button type="button" class="btn-hub" style="width: 100%; padding: 10px; margin-top: 10px; color: var(--rose); border-color: rgba(225, 29, 72, 0.3);" onclick="closeDayAndArchive()">
+            🔒 Close Day & Archive Today's Ledger
+        </button>
+    </div>
+
+    <!-- MODAL 1: 📊 Offline Bar Chart Analytics -->
+    <div class="modal-backdrop" id="modalAnalytics" onclick="handleBackdropClick(event, 'modalAnalytics')">
+        <div class="modal-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalAnalytics')">✕</button>
+            <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 2px;">📊 Profit & Volume Analytics</h3>
+            <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 14px;">100% Offline Business Trend Visualizer</div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <b style="font-size: 13px;">Daily Commission Profit Trend</b>
+                        <div style="font-size: 10px; color: var(--text-sub);">Last 7 active recorded days</div>
+                    </div>
+                    <span class="tag-pill tag-dep">Profit</span>
+                </div>
+                <div class="chart-bars-wrap" id="profitBarsContainer">
+                    <div class="empty-state" style="padding: 10px 0;">Pehle kuch din ka record add ya archive karein.</div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <b style="font-size: 13px;">Transaction Volume Flow</b>
+                        <div style="font-size: 10px; color: var(--text-sub);">Daily turnover volume (₹)</div>
+                    </div>
+                    <span class="tag-pill tag-transfer">Turnover</span>
+                </div>
+                <div class="chart-bars-wrap" id="volumeBarsContainer">
+                    <div class="empty-state" style="padding: 10px 0;">No turnover data recorded yet.</div>
+                </div>
+            </div>
+
+            <button type="button" class="btn-main-submit" style="background: #16a34a; font-size: 11px; height: 38px;" onclick="shareWhatsAppDailySummary()">
+                💬 Share Summary on WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Settings -->
+    <div class="modal-backdrop" id="modalSettings" onclick="handleBackdropClick(event, 'modalSettings')">
+        <div class="modal-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalSettings')">✕</button>
+            <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 14px;">⚙️ Vault Setup & Settings</h3>
+
+            <div class="theme-toggle-row">
+                <div>
+                    <b style="font-size: 13px; display: block;">🌙 Dark Theme Mode</b>
+                    <span style="font-size: 10.5px; color: var(--text-muted);">Switch between Light & Dark Interface</span>
+                </div>
+                <label class="toggle-switch-box">
+                    <input type="checkbox" id="themeToggleCheckbox" onchange="handleThemeToggle(this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="card-stat" style="margin-bottom: 12px; background: var(--surface-card);">
+                <label style="margin-bottom: 6px;">Shop Profile Photo / Logo</label>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button type="button" class="btn-main-submit" style="background: var(--surface); color: var(--text-main); font-size: 11px; height: 38px; border: 1px solid var(--border);" onclick="document.getElementById('logoUploadInput').click()">
+                        📁 Choose Profile Photo
+                    </button>
+                    <button type="button" class="btn-action-small btn-act-del" style="height: 38px; padding: 0 12px;" onclick="removeCustomLogo()">
+                        Remove
+                    </button>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <label>Opening Mobile/UPI Balance (₹)</label>
+                <input type="number" id="cfgMobile" placeholder="0" inputmode="numeric">
+            </div>
+            <div style="margin-bottom: 14px;">
+                <label>Opening Cash Balance (₹)</label>
+                <input type="number" id="cfgCash" placeholder="0" inputmode="numeric">
+            </div>
+
+            <button type="button" class="btn-main-submit" onclick="saveVaultConfig()">Save Vault Balances</button>
+
+            <div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--border);">
+                <label style="margin-bottom: 8px;">Backup & Restore</label>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn-main-submit" style="background: var(--emerald); font-size: 11px; height: 38px;" onclick="exportCompleteBackupJSON()">📥 Download Backup (JSON)</button>
+                    <button type="button" class="btn-main-submit" style="background: #334155; font-size: 11px; height: 38px;" onclick="document.getElementById('jsonRestoreInput').click()">📤 Restore File</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--rose);">
+                <label style="margin-bottom: 8px; color: var(--rose); font-weight: 800;">⚠️ Danger Zone</label>
+                <button type="button" class="btn-main-submit" style="background: linear-gradient(135deg, #e11d48, #be123c); font-size: 12px; height: 42px;" onclick="handleFactoryResetApp()">
+                    💣 Reset Entire App & Clear All Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Customer Mini Statement -->
+    <div class="modal-backdrop" id="modalStatement" onclick="handleBackdropClick(event, 'modalStatement')">
+        <div class="modal-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalStatement')">✕</button>
+            <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 2px;" id="stmtCustName">Customer Statement</h3>
+            <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 12px;" id="stmtCustDetails">Lifetime Summary</div>
+
+            <div class="card-stat" style="margin-bottom: 12px; background: var(--surface-card);">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px;">
+                    <div>Deposit Vol: <b class="text-emerald mono" id="stmtDepVol">₹0</b></div>
+                    <div>Withdraw Vol: <b class="text-rose mono" id="stmtWithVol">₹0</b></div>
+                    <div>Total Profit: <b class="text-cyan mono" id="stmtProfit">₹0</b></div>
+                    <div>Total Entries: <b id="stmtCount">0</b></div>
+                </div>
+            </div>
+
+            <button type="button" class="btn-main-submit" style="background: #16a34a; font-size: 11px; height: 36px; margin-bottom: 12px;" onclick="shareCustomerStatementWhatsApp()">
+                💬 Share Statement on WhatsApp
+            </button>
+
+            <div style="font-size: 12px; font-weight: 700; margin-bottom: 6px;">History Feed</div>
+            <div id="stmtTxnFeed" style="max-height: 250px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Disputes Tracker -->
+    <div class="modal-backdrop" id="modalDisputes" onclick="handleBackdropClick(event, 'modalDisputes')">
+        <div class="modal-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalDisputes')">✕</button>
+            <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 2px;">⚠️ Disputed & Failed Transactions</h3>
+            <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 12px;">7-Day Auto Reversal Tracker</div>
+
+            <div class="card-stat" style="background: var(--surface-card); border-color: rgba(225, 29, 72, 0.35); margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 10px; color: var(--text-sub); font-weight: 700;">TOTAL STUCK AMOUNT</div>
+                        <div style="font-size: 24px; font-weight: 800; color: var(--rose);" class="mono" id="dispStuckAmt">₹0</div>
+                    </div>
+                    <button type="button" class="btn-action-small btn-act-slip" style="padding: 6px 12px;" onclick="shareDisputesListWhatsApp()">💬 Share List</button>
+                </div>
+            </div>
+
+            <div id="disputeListContainer" style="max-height: 280px; overflow-y: auto;">
+                <div class="empty-state">Koi pending dispute nahi hai.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: Filter & Reports -->
+    <div class="modal-backdrop" id="modalReport" onclick="handleBackdropClick(event, 'modalReport')">
+        <div class="modal-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalReport')">✕</button>
+            <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">📅 Date Filter & Reports</h3>
+
+            <div class="card-stat" style="margin-bottom: 12px; background: var(--surface-card);">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Start Date</label>
+                        <input type="date" id="repStartDate">
+                    </div>
+                    <div class="input-group">
+                        <label>End Date</label>
+                        <input type="date" id="repEndDate">
+                    </div>
+                </div>
+                <button type="button" class="btn-main-submit" style="height: 38px; font-size: 12px; margin-top: 6px;" onclick="generateFilteredReport()">🔍 Filter Records</button>
+            </div>
+
+            <div id="reportFilteredList" style="max-height: 250px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 6: Archive History -->
+    <div class="modal-backdrop" id="modalHistory" onclick="handleBackdropClick(event, 'modalHistory')">
+        <div class="modal-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalHistory')">✕</button>
+            <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">📜 Closed Days Archive</h3>
+            <div id="historyFeed" style="max-height: 300px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Full Transaction Details -->
+    <div class="modal-backdrop" id="modalTxnDetails" onclick="handleBackdropClick(event, 'modalTxnDetails')">
+        <div class="modal-drawer details-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalTxnDetails')">✕</button>
+            <div class="details-kicker">TRANSACTION DETAILS</div>
+            <h3 id="detailTitle" style="font-size:18px;font-weight:900;margin-bottom:3px;">Transaction</h3>
+            <div id="detailSubtitle" class="details-subtitle"></div>
+            <div id="txnDetailsBody"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Closed Day Transactions -->
+    <div class="modal-backdrop" id="modalClosedDay" onclick="handleBackdropClick(event, 'modalClosedDay')">
+        <div class="modal-drawer details-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalClosedDay')">✕</button>
+            <div class="details-kicker">CLOSED DAY</div>
+            <h3 id="closedDayTitle" style="font-size:18px;font-weight:900;margin-bottom:3px;">Closed Day</h3>
+            <div id="closedDaySummary" class="details-subtitle"></div>
+            <div id="closedDayTxnList" style="margin-top:14px;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Pending Cash ↔ UPI -->
+    <div class="modal-backdrop" id="modalPendingTransfer" onclick="handleBackdropClick(event, 'modalPendingTransfer')">
+        <div class="modal-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalPendingTransfer')">✕</button>
+            <h3 style="font-size:17px;font-weight:900;margin-bottom:3px;">⏳ Transfer Due</h3>
+            <div style="font-size:10px;color:var(--text-sub);margin-bottom:10px;">Jo paisa diya hai, uska doosra side abhi receive hona baaki hai.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+                <button type="button" class="btn-action-small btn-mark-paid" id="dueTabCash" onclick="setPendingDueTab('cash')">💵 Cash Lena Hai <span id="dueCashCount">0</span></button>
+                <button type="button" class="btn-action-small btn-act-slip" id="dueTabUpi" onclick="setPendingDueTab('upi')">📲 UPI Lena Hai <span id="dueUpiCount">0</span></button>
+            </div>
+            <div id="pendingTransferList"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Udhar / Personal Due -->
+    <div class="modal-backdrop" id="modalUdhar" onclick="handleBackdropClick(event, 'modalUdhar')">
+        <div class="modal-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalUdhar')">✕</button>
+            <div class="details-kicker">PERSONAL DUE</div>
+            <h3 style="font-size:17px;font-weight:900;margin-bottom:3px;">🤝 Udhar / Paisa Pending</h3>
+            <div id="udharSummary" class="due-summary"></div>
+            <div id="udharList" style="margin-top:12px;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 7: Unpaid Withdrawals -->
+    <div class="modal-backdrop" id="modalUnpaid" onclick="handleBackdropClick(event, 'modalUnpaid')">
+        <div class="modal-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalUnpaid')">✕</button>
+            <h3 style="font-size:16px;font-weight:800;margin-bottom:10px;">🟠 Unpaid Withdrawals</h3>
+                        <div id="unpaidList" style="max-height:360px;overflow-y:auto;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 8: Unpaid Settlement / Fee Collection -->
+    <div class="modal-backdrop" id="modalUnpaidSettle" onclick="handleBackdropClick(event, 'modalUnpaidSettle')">
+        <div class="modal-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalUnpaidSettle')">✕</button>
+            <h3 style="font-size:16px;font-weight:800;margin-bottom:6px;">💵 Settle Unpaid Withdrawal</h3>
+            <div id="unpaidSettleInfo" style="background:var(--surface-soft);border:1px solid var(--border-light);border-radius:10px;padding:10px;margin-bottom:12px;font-size:11px;"></div>
+            <div style="font-size:11px;font-weight:800;margin-bottom:7px;">Fee kaise mila?</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+                <button type="button" class="btn-action-small" onclick="completeUnpaidSettlement('Cash')">💵 Fee Cash</button>
+                <button type="button" class="btn-action-small" onclick="completeUnpaidSettlement('Online')">📱 Fee UPI</button>
+                <button type="button" class="btn-action-small" onclick="completeUnpaidSettlement('Deducted')">✂️ Amount Se Kati</button>
+                <button type="button" class="btn-action-small btn-act-del" onclick="completeUnpaidSettlement('None')">⏳ Fee Nahi Mili</button>
+            </div>
+            <div style="font-size:9px;color:var(--text-muted);margin-top:9px;line-height:1.35;">Fee Nahi Mili चुनने पर withdrawal paid ho jayega, lekin fee profit mein add nahi hogi.</div>
+        </div>
+    </div>
+
+    <!-- MODAL 9: Customer Slip Receipt -->
+    <div class="modal-backdrop" id="modalSlip" onclick="handleBackdropClick(event, 'modalSlip')">
+        <div class="modal-drawer">
+            <button type="button" class="btn-close-modal" onclick="closeModal('modalSlip')">✕</button>
+            <h3 style="font-size: 15px; font-weight: 800; margin-bottom: 12px;">🧾 Customer Payment Receipt</h3>
+
+            <div id="receiptCard" style="background: #ffffff; color: #0f172a; padding: 20px; border-radius: 12px; max-width: 360px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div style="display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 10px;">
+                    <div style="width: 38px; height: 38px; border-radius: 8px; background: linear-gradient(135deg, #2563eb, #1d4ed8); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; overflow:hidden;" id="slipLogoContainer">
+                        <img id="slipLogoImg" style="width:100%; height:100%; object-fit:cover; display:none;" alt="Logo">
+                        <span id="slipLogoText">A</span>
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 15px;">AMAR BANKING & CSP</div>
+                        <div style="font-size: 10px; color: #64748b;">Official Transaction Receipt</div>
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 11px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <div><span style="color: #64748b; font-size: 9px; display:block;">TXN ID</span><b id="slipId">TX0000</b></div>
+                    <div><span style="color: #64748b; font-size: 9px; display:block;">DATE & TIME</span><b id="slipTime">--</b></div>
+                    <div><span style="color: #64748b; font-size: 9px; display:block;">CUSTOMER</span><b id="slipParty">--</b></div>
+                    <div><span style="color: #64748b; font-size: 9px; display:block;">STATUS</span><b style="color: #16a34a;">● SUCCESSFUL</b></div>
+                    <div id="slipBankRow" style="display:none;"><span style="color: #64748b; font-size: 9px; display:block;">BANK</span><b id="slipBank">--</b></div>
+                    <div id="slipAccRow" style="display:none;"><span style="color: #64748b; font-size: 9px; display:block;">ID / ACC NO.</span><b id="slipAcc">--</b></div>
+                    <div id="slipRrnRow" style="grid-column: span 2; display:none;"><span style="color: #64748b; font-size: 9px; display:block;">RRN / REF</span><b id="slipRrn">--</b></div>
+                </div>
+
+                <div style="border: 1.5px dashed #cbd5e1; border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 10px; background: #fafafa;">
+                    <div style="font-size: 11px; font-weight: 700;" id="slipTypeTitle">TRANSACTION AMOUNT</div>
+                    <div style="font-size: 28px; font-weight: 800; margin: 4px 0;" id="slipAmt">₹0</div>
+                    <div style="font-size: 10.5px; color: #64748b;">Verified & Completed</div>
+                </div>
+
+                <div style="text-align: center; font-size: 9.5px; color: #94a3b8;">
+                    Thank you for banking with us!
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px;">
+                <button type="button" class="btn-main-submit" style="background: #16a34a; font-size: 11px; height: 38px;" onclick="shareSlipAsImageWA()">📸 Share Image</button>
+                <button type="button" class="btn-main-submit" style="background: #334155; font-size: 11px; height: 38px;" onclick="window.print()">🖨️ Print Slip</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-bubble" id="toastMsg">Action Done!</div>
+
+<script>
+    var activeType = 'Deposit';
+    var currentStatementCustomer = null;
+    var currentSlipData = null;
+
+    var database = {
+        openingMobile: 0,
+        openingCash: 0,
+        darkMode: true,
+        customLogo: null,
+        transactions: [],
+        allTransactionsHistory: [],
+        savedCustomers: {},
+        disputes: [],
+        archive: [],
+        unpaidWithdrawals: [],
+        loanNotes: []
+    };
+
+    function normalizeFeeFields() {
+        (database.transactions || []).forEach(function(tx) {
+            if ((tx.type === 'Deposit' || tx.type === 'Withdrawal') && !tx.feeCollection) {
+                tx.feeCollection = tx.chargeMode || 'Cash';
+            }
+        });
+        (database.allTransactionsHistory || []).forEach(function(tx) {
+            if ((tx.type === 'Deposit' || tx.type === 'Withdrawal') && !tx.feeCollection) {
+                tx.feeCollection = tx.chargeMode || 'Cash';
+            }
+        });
+        (database.unpaidWithdrawals || []).forEach(function(x) {
+            if (x.feeDue == null) x.feeDue = Number(x.fee) || 0;
+            if (x.feeReceived == null) x.feeReceived = 0;
+        });
+    }
+
+    function init() {
+        normalizeFeeFields();
+        var today = new Date();
+        document.getElementById('liveDateChip').innerText = today.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' });
+        
+        var iso = today.toISOString().split('T')[0];
+        document.getElementById('repStartDate').value = iso;
+        document.getElementById('repEndDate').value = iso;
+
+        // Try to retrieve existing logo from dedicated persistent key first
+        var savedLogo = localStorage.getItem('amar_custom_logo');
+
+        var saved = localStorage.getItem('amar_ledger_v29') || localStorage.getItem('amar_ledger_v28') || localStorage.getItem('amar_ledger_v27');
+        if (saved) {
+            try {
+                var parsed = JSON.parse(saved);
+                if (parsed && typeof parsed === 'object') {
+                    database.openingMobile = Number(parsed.openingMobile) || 0;
+                    database.openingCash = Number(parsed.openingCash) || 0;
+                    database.darkMode = Boolean(parsed.darkMode);
+                    database.customLogo = savedLogo || parsed.customLogo || null;
+                    database.transactions = Array.isArray(parsed.transactions) ? parsed.transactions : [];
+                    database.allTransactionsHistory = Array.isArray(parsed.allTransactionsHistory) ? parsed.allTransactionsHistory : [];
+                    database.savedCustomers = (parsed.savedCustomers && typeof parsed.savedCustomers === 'object') ? parsed.savedCustomers : {};
+                    database.disputes = Array.isArray(parsed.disputes) ? parsed.disputes : [];
+                    database.archive = Array.isArray(parsed.archive) ? parsed.archive : [];
+                    database.unpaidWithdrawals = Array.isArray(parsed.unpaidWithdrawals) ? parsed.unpaidWithdrawals : [];
+                    database.loanNotes = Array.isArray(parsed.loanNotes) ? parsed.loanNotes : [];
+                    // Dedicated persistent store: protects Unpaid records on Android file/WebView restarts.
+                    try {
+                        var savedUnpaid = localStorage.getItem('amar_unpaid_withdrawals_v29');
+                        if (savedUnpaid) {
+                            var parsedUnpaid = JSON.parse(savedUnpaid);
+                            if (Array.isArray(parsedUnpaid)) database.unpaidWithdrawals = parsedUnpaid;
+                        }
+                    } catch(e) { console.warn('Dedicated unpaid storage read failed:', e); }
+
+                    // Recovery/migration: never lose an unpaid withdrawal after refresh/app restart.
+                    // Older test data may have the status only on the transaction itself.
+                    var knownUnpaid = {};
+                    database.unpaidWithdrawals.forEach(function(x) { if (x && x.id) knownUnpaid[x.id] = true; });
+                    (database.transactions || []).forEach(function(x) {
+                        if (x && x.type === 'Withdrawal' && x.status === 'Unpaid' && !knownUnpaid[x.id]) {
+                            database.unpaidWithdrawals.push({
+                                id:x.id, amount:Number(x.amount)||0, fee:Number(x.charge)||0, party:x.party||'Customer',
+                                mobile:x.mobile||'', bank:x.bank||'', acc:x.acc||'', rrn:x.rrn||'',
+                                date:x.date||'', time:x.time||'', status:'Unpaid'
+                            });
+                        }
+                    });
+                    syncStorage();
+                }
+            } catch(e) {
+                console.error("Storage parse error:", e);
+            }
+        } else if (savedLogo) {
+            database.customLogo = savedLogo;
+        }
+
+        // Final dedicated-store recovery, including when the main ledger key is unavailable.
+        try {
+            var lastUnpaid = localStorage.getItem('amar_unpaid_withdrawals_v29');
+            if (lastUnpaid) {
+                var lastParsedUnpaid = JSON.parse(lastUnpaid);
+                if (Array.isArray(lastParsedUnpaid)) database.unpaidWithdrawals = lastParsedUnpaid;
+            }
+        } catch(e) { console.warn('Dedicated unpaid recovery failed:', e); }
+
+        document.getElementById('cfgMobile').value = database.openingMobile || '';
+        document.getElementById('cfgCash').value = database.openingCash || '';
+
+        applyTheme(database.darkMode === undefined ? true : database.darkMode);
+        applyLogoToUI();
+        setMode(activeType);
+        recalculateAndRender();
+        renderDisputes();
+    }
+
+    function syncStorage() {
+        try {
+            localStorage.setItem('amar_ledger_v29', JSON.stringify(database));
+            // Store unpaid ledger separately as well, so it survives any ledger/day-close rewrite.
+            localStorage.setItem('amar_unpaid_withdrawals_v29', JSON.stringify(database.unpaidWithdrawals || []));
+            if (database.customLogo) {
+                localStorage.setItem('amar_custom_logo', database.customLogo);
+            } else {
+                localStorage.removeItem('amar_custom_logo');
+            }
+        } catch(e) {
+            console.error("Storage write error:", e);
+        }
+    }
+
+    function showToast(msg) {
+        var t = document.getElementById('toastMsg');
+        t.innerText = msg;
+        t.style.display = 'block';
+        setTimeout(function() { t.style.display = 'none'; }, 2000);
+    }
+
+    /* === MODAL & BODY SCROLL LOCKING ENGINE === */
+    function openModal(id) {
+        var el = document.getElementById(id);
+        if (el) {
+            el.classList.add('active');
+            document.body.classList.add('modal-open');
+        }
+        if (id === 'modalSettings') {
+            document.getElementById('cfgMobile').value = database.openingMobile || '';
+            document.getElementById('cfgCash').value = database.openingCash || '';
+        }
+        if (id === 'modalAnalytics') renderAnalyticsCharts();
+        if (id === 'modalDisputes') renderDisputes();
+        if (id === 'modalHistory') renderArchive();
+        if (id === 'modalReport') generateFilteredReport();
+        if (id === 'modalUdhar') renderUdharModal();
+        if (id === 'modalPendingTransfer') renderPendingTransferModal();
+    }
+
+    function closeModal(id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+        
+        var anyActive = document.querySelector('.modal-backdrop.active');
+        if (!anyActive) {
+            document.body.classList.remove('modal-open');
+        }
+    }
+
+    function handleBackdropClick(e, id) {
+        if (e.target && e.target.id === id) {
+            closeModal(id);
+        }
+    }
+
+    function applyTheme(isDark) {
+        var chk = document.getElementById('themeToggleCheckbox');
+        if (chk) chk.checked = isDark;
+        if (isDark) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    }
+
+    function handleThemeToggle(isChecked) {
+        database.darkMode = isChecked;
+        applyTheme(isChecked);
+        syncStorage();
+        showToast(isChecked ? '🌙 Dark Mode Activated' : '☀️ Light Mode Activated');
+    }
+
+    /* === RESIZED & GUARANTEED PERSISTENT PROFILE PHOTO UPLOAD === */
+    function handleLogoUpload(event) {
+        var file = event.target.files[0];
+        if (!file) return;
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var img = new Image();
+            img.onload = function() {
+                // Resize image to max 240x240 for crisp quality and tiny storage footprint (~15-20KB)
+                var canvas = document.createElement('canvas');
+                var maxDim = 240;
+                var width = img.width;
+                var height = img.height;
+
+                if (width > height) {
+                    if (width > maxDim) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    }
+                } else {
+                    if (height > maxDim) {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Compress to lightweight JPEG data string
+                var compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+                database.customLogo = compressedDataUrl;
+                syncStorage();
+                applyLogoToUI();
+                showToast('Profile Photo Saved & Locked! 📷');
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeCustomLogo() {
+        if (confirm("Profile photo hata kar default 'A' logo lagayein?")) {
+            database.customLogo = null;
+            syncStorage();
+            applyLogoToUI();
+            showToast('Default Logo Restored');
+        }
+    }
+
+    function applyLogoToUI() {
+        var headImg = document.getElementById('headerLogoImg');
+        var headTxt = document.getElementById('headerLogoText');
+        var slipImg = document.getElementById('slipLogoImg');
+        var slipTxt = document.getElementById('slipLogoText');
+
+        if (database.customLogo) {
+            headImg.src = database.customLogo;
+            headImg.style.display = 'block';
+            headTxt.style.display = 'none';
+
+            slipImg.src = database.customLogo;
+            slipImg.style.display = 'block';
+            slipTxt.style.display = 'none';
+        } else {
+            headImg.style.display = 'none';
+            headTxt.style.display = 'block';
+
+            slipImg.style.display = 'none';
+            slipTxt.style.display = 'block';
+        }
+    }
+
+    function toggleExtraSection() {
+        if (activeType === 'Udhar' || activeType === 'Expense' || activeType === 'BankLoad') {
+            var hiddenBox = document.getElementById('extraSection');
+            var hiddenBtn = document.getElementById('btnToggleExtra');
+            if (hiddenBox) hiddenBox.style.display = 'none';
+            if (hiddenBtn) hiddenBtn.style.display = 'none';
+            return;
+        }
+        var box = document.getElementById('extraSection');
+        var btn = document.getElementById('btnToggleExtra');
+        if (box.style.display === 'block') {
+            box.style.display = 'none';
+            btn.innerText = '➕ Add Customer Details (Bank, ID, Mobile, RRN)';
+        } else {
+            box.style.display = 'block';
+            btn.innerText = '➖ Hide Customer Details';
+        }
+    }
+
+    function setMode(type) {
+        activeType = type;
+        document.getElementById('btnTabDep').className = (type === 'Deposit') ? 'tab-btn active-dep' : 'tab-btn';
+        document.getElementById('btnTabWith').className = (type === 'Withdrawal') ? 'tab-btn active-with' : 'tab-btn';
+        document.getElementById('btnTabExp').className = (type === 'Expense') ? 'tab-btn active-exp' : 'tab-btn';
+        document.getElementById('btnTabTransfer').className = (type === 'BankLoad') ? 'tab-btn active-transfer' : 'tab-btn';
+        document.getElementById('btnTabUdhar').className = (type === 'Udhar') ? 'tab-btn active-loan' : 'tab-btn';
+
+        var feeRow = document.getElementById('feeRow');
+        var expRow = document.getElementById('expRow');
+        var transferRow = document.getElementById('transferRow');
+        var udharRow = document.getElementById('udharRow');
+        var toggleBtn = document.getElementById('btnToggleExtra');
+        var extraSection = document.getElementById('extraSection');
+        var lbl = document.getElementById('lblParty');
+        // Always reset customer-details visibility before switching modes.
+        // This prevents the Add Customer Details button/box from leaking into Udhar.
+        if (udharRow) udharRow.style.display = 'none';
+        if (toggleBtn) { toggleBtn.style.display = 'none'; toggleBtn.innerText = '➕ Add Customer Details (Bank, ID, Mobile, RRN)'; }
+        if (extraSection) extraSection.style.display = 'none';
+
+        if (type === 'Udhar') {
+            feeRow.style.display = 'none'; expRow.style.display = 'none'; transferRow.style.display = 'none'; toggleBtn.style.display = 'none'; extraSection.style.display = 'none';
+            udharRow.style.display = 'flex'; lbl.innerText = 'Person Name';
+        } else if (type === 'Expense') {
+            feeRow.style.display = 'none';
+            transferRow.style.display = 'none';
+            toggleBtn.style.display = 'none';
+            extraSection.style.display = 'none';
+            expRow.style.display = 'flex';
+            lbl.innerText = 'Expense Reason';
+        } else if (type === 'BankLoad') {
+            feeRow.style.display = 'none';
+            expRow.style.display = 'none';
+            toggleBtn.style.display = 'none';
+            extraSection.style.display = 'none';
+            transferRow.style.display = 'flex';
+            lbl.innerText = 'Cash ↔ UPI Note';
+        } else {
+            feeRow.style.display = 'flex';
+            expRow.style.display = 'none';
+            transferRow.style.display = 'none';
+            toggleBtn.style.display = 'block';
+            lbl.innerText = 'Customer Name';
+        }
+        ensureUnpaidControl();
+    }
+
+    function ensureUnpaidControl() {
+        var row = document.getElementById('feeRow');
+        if (!row) return;
+        var old = document.getElementById('unpaidWrap');
+        if (activeType === 'Withdrawal') {
+            if (!old) {
+                var d = document.createElement('div');
+                d.id = 'unpaidWrap';
+                d.className = 'unpaid-toggle-row';
+                d.innerHTML = '<label class="unpaid-toggle-label"><input type="checkbox" id="inpUnpaidWithdrawal"><span>🟠 Mark as Unpaid</span></label><span class="unpaid-help">Payment pending</span>';
+                row.parentNode.insertBefore(d, row.nextSibling);
+            }
+        } else if (old) {
+            old.remove();
+        }
+    }
+
+    function openUnpaidModal() {
+        renderUnpaidModal();
+        openModal('modalUnpaid');
+    }
+
+    function renderUnpaidModal() {
+        var list = document.getElementById('unpaidList');
+        if (!list) return;
+        var pending = (database.unpaidWithdrawals || []).filter(function(x) { return x.status === 'Unpaid'; });
+        var total = pending.reduce(function(sum, x) { return sum + Number(x.amount || 0); }, 0);
+        
+        
+        list.innerHTML = '';
+
+        if (!pending.length) {
+            list.innerHTML = '<div class="empty-state">No Unpaid Withdrawal pending. ✅</div>';
+            return;
+        }
+
+        pending.forEach(function(x) {
+            var card = document.createElement('div');
+            card.className = 'unpaid-item';
+            card.innerHTML = `
+                <div class="unpaid-item-top">
+                    <div>
+                        <div class="unpaid-item-name">${x.party || 'Customer'}</div>
+                        <div class="unpaid-item-meta">${x.date || ''} • ${x.time || ''} • ${x.id || ''}${x.bank ? ' • 🏦 ' + x.bank : ''}${x.rrn ? ' • RRN: ' + x.rrn : ''}</div>
+                    </div>
+                    <div class="unpaid-item-amt">₹${Number(x.amount || 0).toLocaleString('en-IN')}</div>
+                </div>
+                ${(Number(x.feeDue != null ? x.feeDue : x.fee) || 0) ? '<div class="unpaid-item-meta">Fee Due: ₹' + Number(x.feeDue != null ? x.feeDue : x.fee).toLocaleString('en-IN') + '</div>' : ''}
+                <div class="unpaid-item-actions">
+                    <button type="button" class="btn-action-small btn-mark-paid" onclick="markUnpaidPaid(\'${x.id}\')">💵 Mark Paid</button>
+                    <button type="button" class="btn-action-small btn-unpaid-delete" onclick="deleteUnpaidWithdrawal(\'${x.id}\')">🗑️ Delete</button>
+                </div>`;
+            list.appendChild(card);
+        });
+    }
+
+    function autoSuggestFee() {
+        if (activeType === 'Expense' || activeType === 'BankLoad' || activeType === 'Udhar') return;
+        var amt = parseFloat(document.getElementById('inpAmount').value) || 0;
+        var fee = document.getElementById('inpCharge');
+        if (amt >= 10000) fee.value = 100;
+        else if (amt >= 5000) fee.value = 50;
+        else if (amt >= 3000) fee.value = 30;
+        else if (amt >= 1000) fee.value = 20;
+        else fee.value = (amt > 0 ? 10 : 0);
+    }
+
+    function setFeeQuick(val) {
+        document.getElementById('inpCharge').value = val;
+    }
+
+    function autoFillCustomerInfo(name) {
+        var cust = (database.savedCustomers || {})[name.trim()];
+        if (cust) {
+            if (cust.mobile) document.getElementById('inpCustMobile').value = cust.mobile;
+            if (cust.bank) document.getElementById('inpCustBank').value = cust.bank;
+            if (cust.acc) document.getElementById('inpCustAcc').value = cust.acc;
+            if (cust.rrn) document.getElementById('inpCustRrn').value = cust.rrn;
+            document.getElementById('extraSection').style.display = 'block';
+            document.getElementById('btnToggleExtra').innerText = '➖ Hide Customer Details';
+            showToast('Customer Info Auto-Filled ⚡');
+        }
+    }
+
+    function saveVaultConfig() {
+        var mInp = document.getElementById('cfgMobile').value;
+        var cInp = document.getElementById('cfgCash').value;
+
+        database.openingMobile = (mInp === '' || isNaN(Number(mInp))) ? 0 : Number(mInp);
+        database.openingCash = (cInp === '' || isNaN(Number(cInp))) ? 0 : Number(cInp);
+
+        syncStorage();
+        recalculateAndRender();
+        closeModal('modalSettings');
+        showToast('Vault Balances Saved! 💰');
+    }
+
+    function handleFactoryResetApp() {
+        var ans = prompt("⚠️ Chetwani: Kya aap sach me sara hisab, register aur ledger data RESET karna chahte hain?\n\nType karein 'RESET' confirm karne ke liye:");
+        if (ans === 'RESET') {
+            database = {
+                openingMobile: 0,
+                openingCash: 0,
+                darkMode: false,
+                customLogo: null,
+                transactions: [],
+                allTransactionsHistory: [],
+                savedCustomers: {},
+                disputes: [],
+                archive: [],
+                unpaidWithdrawals: [],
+                loanNotes: []
+            };
+            localStorage.removeItem('amar_custom_logo');
+            syncStorage();
+            init();
+            closeModal('modalSettings');
+            showToast('App Reset Successfully! 💣');
+        } else if (ans !== null) {
+            alert('Reset Cancel Kar Diya Gaya.');
+        }
+    }
+
+    function handleSaveEntry(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        
+        var amt = parseFloat(document.getElementById('inpAmount').value) || 0;
+        var fee = parseFloat(document.getElementById('inpCharge').value) || 0;
+        var party = document.getElementById('inpParty').value.trim() || (activeType === 'Expense' ? 'Shop Expense' : (activeType === 'BankLoad' ? 'Cash ↔ UPI' : (activeType === 'Udhar' ? 'Person' : 'Customer')));
+        var feeMode = document.getElementById('inpChargeMode').value;
+        var expMode = document.getElementById('inpExpMode').value;
+        var transferDir = document.getElementById('inpTransferDir').value;
+        var transferStatusChoice = document.getElementById('inpTransferStatus') ? document.getElementById('inpTransferStatus').value : 'Complete';
+        var udharAction = 'Give';
+        var udharMode = document.getElementById('inpUdharMode') ? document.getElementById('inpUdharMode').value : 'Cash';
+
+        var mobile = document.getElementById('inpCustMobile').value.trim();
+        var bank = document.getElementById('inpCustBank').value.trim();
+        var acc = document.getElementById('inpCustAcc').value.trim();
+        var rrn = document.getElementById('inpCustRrn').value.trim();
+
+        if (amt <= 0) {
+            alert("Kripya valid amount darj karein.");
+            return false;
+        }
+
+        if (activeType !== 'Expense' && activeType !== 'BankLoad' && activeType !== 'Udhar' && party !== 'Customer') {
+            database.savedCustomers = database.savedCustomers || {};
+            database.savedCustomers[party] = { mobile: mobile, bank: bank, acc: acc, rrn: rrn };
+            }
+
+        var now = new Date();
+        var unpaid = (activeType === 'Withdrawal' && document.getElementById('inpUnpaidWithdrawal') && document.getElementById('inpUnpaidWithdrawal').checked);
+        var newTx = {
+            id: 'TX' + Date.now().toString().slice(-5),
+            type: activeType,
+            status: unpaid ? 'Unpaid' : 'Paid',
+            amount: amt,
+            loanAction: activeType === 'Udhar' ? udharAction : null,
+            loanMode: activeType === 'Udhar' ? udharMode : null,
+            transferStatus: activeType === 'BankLoad' ? (transferStatusChoice === 'Pending' ? (transferDir === 'BankToCash' ? 'Pending Cash' : 'Pending UPI') : 'Complete') : null,
+            party: party,
+            charge: (activeType === 'Deposit' || activeType === 'Withdrawal') ? fee : 0,
+            chargeMode: (activeType === 'Expense' ? expMode : (activeType === 'BankLoad' ? transferDir : (activeType === 'Udhar' ? udharMode : feeMode))),
+            feeCollection: (activeType === 'Deposit' || activeType === 'Withdrawal') ? feeMode : null,
+            mobile: mobile,
+            bank: bank,
+            acc: acc,
+            rrn: rrn,
+            time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            date: now.toLocaleDateString('en-GB'),
+            isoDate: now.toISOString().split('T')[0]
+        };
+
+        if (unpaid && activeType === 'Withdrawal') {
+            database.unpaidWithdrawals = database.unpaidWithdrawals || [];
+            database.unpaidWithdrawals.unshift({id:newTx.id, amount:amt, fee:fee, feeDue:fee, party:party, mobile:mobile, bank:bank, acc:acc, rrn:rrn, date:newTx.date, time:newTx.time, status:'Unpaid', chargeMode:newTx.chargeMode, feeCollection:null, feeReceived:0, isoDate:newTx.isoDate});
+        }
+        if (activeType === 'BankLoad' && transferStatusChoice === 'Pending') { newTx.status = newTx.transferStatus; }
+        database.transactions.unshift(newTx);
+        database.allTransactionsHistory.unshift(newTx);
+        syncStorage();
+        recalculateAndRender();
+
+        document.getElementById('inpAmount').value = '';
+        document.getElementById('inpParty').value = '';
+        document.getElementById('inpCharge').value = '0';
+        document.getElementById('inpCustMobile').value = '';
+        document.getElementById('inpCustBank').value = '';
+        document.getElementById('inpCustAcc').value = '';
+        document.getElementById('inpCustRrn').value = '';
+        document.getElementById('extraSection').style.display = 'none';
+        document.getElementById('btnToggleExtra').innerText = '➕ Add Customer Details (Bank, ID, Mobile, RRN)';
+        showToast('Transaction Recorded! ✅');
+        return false;
+    }
+
+    // SINGLE SOURCE OF TRUTH for all live balance calculations.
+    // Unpaid withdrawals are intentionally ignored until Mark Paid.
+    function calculateLedgerState(transactions, openingMobile, openingCash) {
+        var mobBal = Number(openingMobile) || 0;
+        var cashBal = Number(openingCash) || 0;
+        var grossFee = 0, totalExp = 0, depVol = 0, withVol = 0;
+        (transactions || []).forEach(function(tx) {
+            var amount = Number(tx.amount) || 0;
+            var charge = Number(tx.charge) || 0;
+            var feeCollection = tx.feeCollection || tx.chargeMode || 'Cash';
+            if (tx.type === 'Deposit') {
+                mobBal -= amount; cashBal += amount; depVol += amount; grossFee += charge;
+                if (feeCollection === 'Cash') cashBal += charge;
+                else mobBal += charge; // UPI or amount deducted: bank receives net amount
+            } else if (tx.type === 'Withdrawal') {
+                if (tx.status === 'Unpaid') return;
+                mobBal += amount; cashBal -= amount; withVol += amount; grossFee += charge;
+                if (feeCollection === 'Cash' || feeCollection === 'Deducted') cashBal += charge;
+                else mobBal += charge;
+            } else if (tx.type === 'Expense') {
+                totalExp += amount;
+                if (tx.chargeMode === 'Cash') cashBal -= amount; else mobBal -= amount;
+            } else if (tx.type === 'BankLoad') {
+                if (tx.chargeMode === 'CashToBank') { cashBal -= amount; if (tx.transferStatus !== 'Pending UPI') mobBal += amount; }
+                else if (tx.chargeMode === 'CashToBankPending') { cashBal -= amount; if (tx.transferStatus !== 'Pending UPI') mobBal += amount; }
+                else if (tx.chargeMode === 'BankToCash') { mobBal -= amount; if (tx.transferStatus !== 'Pending Cash') cashBal += amount; }
+            } else if (tx.type === 'TransferSettlement') {
+                if (tx.settlementSide === 'UPI') mobBal += amount; else cashBal += amount;
+            } else if (tx.type === 'Udhar') {
+                if (tx.loanAction === 'Give') { if (tx.loanMode === 'Cash') cashBal -= amount; else mobBal -= amount; }
+                else { if (tx.loanMode === 'Cash') cashBal += amount; else mobBal += amount; }
+            } else if (tx.type === 'UnpaidSettlement') {
+                mobBal += amount; cashBal -= amount; grossFee += charge;
+                if (feeCollection === 'Cash' || feeCollection === 'Deducted') cashBal += charge;
+                else if (feeCollection === 'Online') mobBal += charge;
+            }
+        });
+        return {
+            mobile: mobBal, cash: cashBal, total: mobBal + cashBal,
+            grossFee: grossFee, expenses: totalExp,
+            profit: grossFee - totalExp, depositVolume: depVol, withdrawalVolume: withVol
+        };
+    }
+
+    // Calculation audit helper: returns the exact ledger math without mutating data.
+    function auditCurrentLedger() {
+        var state = calculateLedgerState(database.transactions || [], database.openingMobile, database.openingCash);
+        return {
+            openingMobile: Number(database.openingMobile) || 0,
+            openingCash: Number(database.openingCash) || 0,
+            mobile: state.mobile, cash: state.cash, total: state.total,
+            grossFee: state.grossFee, expenses: state.expenses, profit: state.profit,
+            depositVolume: state.depositVolume, withdrawalVolume: state.withdrawalVolume,
+            unpaidCount: (database.unpaidWithdrawals || []).filter(function(x){ return x.status === 'Unpaid'; }).length,
+            unpaidAmount: (database.unpaidWithdrawals || []).filter(function(x){ return x.status === 'Unpaid'; }).reduce(function(a,x){ return a + (Number(x.amount)||0); }, 0)
+        };
+    }
+
+    function recalculateAndRender() {
+        var state = calculateLedgerState(database.transactions, database.openingMobile, database.openingCash);
+        var mobBal = state.mobile, cashBal = state.cash;
+
+        document.getElementById('dispTotalVault').innerText = '₹' + state.total.toLocaleString('en-IN');
+        document.getElementById('dispMobileVault').innerText = '₹' + mobBal.toLocaleString('en-IN');
+        document.getElementById('dispCashVault').innerText = '₹' + cashBal.toLocaleString('en-IN');
+
+        var mobDiff = mobBal - (Number(database.openingMobile) || 0);
+        var cashDiff = cashBal - (Number(database.openingCash) || 0);
+        var mobDiffEl = document.getElementById('dispMobileNet');
+        mobDiffEl.innerText = 'Net: ' + (mobDiff >= 0 ? '+' : '') + '₹' + mobDiff.toLocaleString('en-IN');
+        mobDiffEl.className = 'badge-net ' + (mobDiff >= 0 ? 'text-emerald' : 'text-rose');
+        var cashDiffEl = document.getElementById('dispCashNet');
+        cashDiffEl.innerText = 'Net: ' + (cashDiff >= 0 ? '+' : '') + '₹' + cashDiff.toLocaleString('en-IN');
+        cashDiffEl.className = 'badge-net ' + (cashDiff >= 0 ? 'text-emerald' : 'text-rose');
+
+        document.getElementById('dispTotalProfit').innerText = '₹' + state.profit.toLocaleString('en-IN');
+        document.getElementById('dispGrossFee').innerText = '₹' + state.grossFee.toLocaleString('en-IN');
+        document.getElementById('dispTotalExp').innerText = '₹' + state.expenses.toLocaleString('en-IN');
+        document.getElementById('dispTotalDepVol').innerText = '₹' + state.depositVolume.toLocaleString('en-IN');
+        document.getElementById('dispTotalWithVol').innerText = '₹' + state.withdrawalVolume.toLocaleString('en-IN');
+        document.getElementById('badgeEntryCount').innerText = database.transactions.length + ' entries';
+
+        var pending = (database.unpaidWithdrawals || []).filter(function(x){ return x.status === 'Unpaid'; });
+        var pendingTransfers = (database.allTransactionsHistory || []).filter(function(x){ return x.type==='BankLoad' && (x.transferStatus==='Pending Cash' || x.transferStatus==='Pending UPI'); });
+        var loanPeople = getUdharPeople ? getUdharPeople() : [];
+        var tag = document.getElementById('unpaidCountTag');
+        if(tag){ tag.innerText = pending.length; tag.style.display = pending.length > 0 ? 'flex' : 'none'; }
+        var pt=document.getElementById('pendingTransferCountTag'); if(pt){pt.innerText=pendingTransfers.length;pt.style.display=pendingTransfers.length?'flex':'none';}
+        var ut=document.getElementById('udharCountTag'); if(ut){ut.innerText=loanPeople.length;ut.style.display=loanPeople.length?'flex':'none';}
+        var unpaidBtn = document.querySelector('.btn-hub[onclick="openUnpaidModal()"]');
+        if(unpaidBtn) unpaidBtn.title = 'Unpaid Withdrawals: ' + pending.length;
+        renderRegisterFeed();
+        if(document.getElementById('modalUnpaid') && document.getElementById('modalUnpaid').style.display === 'flex') renderUnpaidModal();
+    }
+
+    function renderRegisterFeed() {
+        var query = (document.getElementById('searchInp').value || '').toLowerCase();
+        var listDiv = document.getElementById('txList');
+        listDiv.innerHTML = '';
+
+        var filtered = database.transactions.filter(function(t) {
+            // Pending Cash↔UPI transfers live only in Transfer Due, not in the active transaction feed.
+            if (t.type === 'BankLoad' && (t.transferStatus === 'Pending Cash' || t.transferStatus === 'Pending UPI')) return false;
+            return t.party.toLowerCase().includes(query) ||
+                   t.amount.toString().includes(query) ||
+                   t.type.toLowerCase().includes(query) ||
+                   (t.bank && t.bank.toLowerCase().includes(query)) ||
+                   (t.rrn && t.rrn.toLowerCase().includes(query));
+        });
+
+        if (filtered.length === 0) {
+            listDiv.innerHTML = '<div class="empty-state">No matching transactions found.</div>';
+            return;
+        }
+
+        filtered.forEach(function(tx) {
+            var isDep = tx.type === 'Deposit';
+            var isExp = tx.type === 'Expense';
+            var isLoad = tx.type === 'BankLoad';
+            var isLoan = tx.type === 'Udhar';
+            var isSettlement = tx.type === 'UnpaidSettlement';
+            var isTransferSettlement = tx.type === 'TransferSettlement';
+            var canShowDetails = isDep || tx.type === 'Withdrawal';
+            var statusLabel = '';
+            if (isDep || tx.type === 'Withdrawal') {
+                statusLabel = tx.status === 'Unpaid' ? ' • UNPAID' : ' • SUCCESS';
+            } else if (isLoad) {
+                statusLabel = tx.transferStatus === 'Complete' ? ' • SUCCESS' : ' • PENDING';
+            }
+
+            var pillClass = 'tag-dep';
+            if (isExp) pillClass = 'tag-exp';
+            else if (isLoad) pillClass = 'tag-transfer';
+            else if (isLoan || isSettlement || isTransferSettlement) pillClass = 'tag-transfer';
+            else if (!isDep) pillClass = 'tag-with';
+
+            // Transaction-list movement must mirror the same fee-mode accounting used by calculateBalances().
+            // For 'Deducted', the fee is retained from the transaction amount, so the customer-facing net
+            // amount is amount - fee while the ledger still records the full transaction amount and fee separately.
+            var txAmount = Number(tx.amount) || 0;
+            var txFee = Number(tx.charge) || 0;
+            var txFeeMode = tx.feeCollection || tx.chargeMode || 'Cash';
+            var isUnpaidWithdrawal = (!isDep && !isExp && !isLoad && tx.status === 'Unpaid');
+            var netAmount = Math.max(0, txAmount - txFee);
+            var mobValue = 0, cashValue = 0;
+
+            if (isUnpaidWithdrawal) {
+                mobValue = 0;
+                cashValue = 0;
+            } else if (isDep) {
+                cashValue = txAmount;
+                mobValue = -txAmount;
+                if (txFeeMode === 'Cash') cashValue += txFee;
+                else mobValue += txFee; // UPI fee or fee retained from deposit amount
+            } else if (isExp) {
+                cashValue = tx.chargeMode === 'Cash' ? -txAmount : 0;
+                mobValue = tx.chargeMode === 'Online' ? -txAmount : 0;
+            } else if (isLoad) {
+                if (tx.chargeMode === 'CashToBank') { cashValue = -txAmount; mobValue = txAmount; }
+                else if (tx.chargeMode === 'CashToBankPending') { cashValue = -txAmount; mobValue = tx.transferStatus === 'Pending UPI' ? 0 : txAmount; }
+                else { mobValue = -txAmount; cashValue = tx.transferStatus === 'Pending Cash' ? 0 : txAmount; }
+            } else if (isLoan) {
+                if (tx.loanAction === 'Give') { if (tx.loanMode === 'Cash') cashValue = -txAmount; else mobValue = -txAmount; }
+                else { if (tx.loanMode === 'Cash') cashValue = txAmount; else mobValue = txAmount; }
+            } else if (isSettlement) {
+                mobValue = txAmount; cashValue = -txAmount;
+                if (txFeeMode === 'Cash' || txFeeMode === 'Deducted') cashValue += txFee; else if (txFeeMode === 'Online') mobValue += txFee;
+            } else if (isTransferSettlement) {
+                cashValue = txAmount;
+            } else { // Withdrawal
+                mobValue = txAmount;
+                cashValue = -txAmount;
+                if (txFeeMode === 'Cash' || txFeeMode === 'Deducted') cashValue += txFee;
+                else mobValue += txFee;
+            }
+
+            function formatMovement(v) {
+                if (v > 0) return '+₹' + Math.abs(v).toLocaleString('en-IN');
+                if (v < 0) return '-₹' + Math.abs(v).toLocaleString('en-IN');
+                return '₹0';
+            }
+
+            var mobText = formatMovement(mobValue);
+            var cashText = formatMovement(cashValue);
+            var feeText = isUnpaidWithdrawal ? (txFee > 0 ? 'Due ₹' + txFee.toLocaleString('en-IN') : '₹0') : (txFee > 0 ? '+₹' + txFee.toLocaleString('en-IN') : '₹0');
+            var loanLabel = isLoan ? (tx.loanAction === 'Give' ? '🤝 Udhar Diya' : '💰 Repayment • Paisa Wapas Mila') : (isSettlement ? 'Unpaid Settlement' : (isTransferSettlement ? 'Cash Received' : ''));
+            var loanRemainingLabel = '';
+            if (isLoan && tx.loanAction === 'Repay') {
+                var remainingAfterRepay = getUdharDueAfterTransaction(tx);
+                loanRemainingLabel = '<div style="font-size:9px;color:var(--text-sub);margin-top:5px;grid-column:1/-1;">↩️ Repayment received ₹' + txAmount.toLocaleString('en-IN') + ' • Remaining Due ₹' + remainingAfterRepay.toLocaleString('en-IN') + '</div>';
+            }
+            var netLabel = '';
+            if ((isDep || (!isDep && !isExp && !isLoad)) && txFeeMode === 'Deducted' && txFee > 0 && !isUnpaidWithdrawal) {
+                netLabel = `<div style="font-size:9px;color:var(--text-sub);margin-top:5px;grid-column:1/-1;">✂️ Fee ₹${txFee.toLocaleString('en-IN')} adjusted • Net ${isDep ? 'deposit' : 'cash paid'} ₹${netAmount.toLocaleString('en-IN')}</div>`;
+            }
+
+            var card = document.createElement('div');
+            card.className = 'card-txn' + (canShowDetails ? ' clickable-txn' : '');
+            if (canShowDetails) card.onclick = function(ev){ if(ev.target.closest('button')) return; openTransactionDetails(tx.id); };
+            card.innerHTML = `
+                <div class="card-txn-top">
+                    <div>
+                        <div class="party-name">${tx.party}</div>
+                        <div class="txn-meta">${tx.time} • ${tx.id}</div>
+                    </div>
+                    <span class="tag-pill ${pillClass}">${loanLabel || (isLoad ? (tx.chargeMode === 'CashToBank' ? 'Cash → UPI' : 'UPI → Cash') : tx.type)}${statusLabel} ₹${tx.amount.toLocaleString('en-IN')}</span>
+                </div>
+                <div class="breakdown-row mono">
+                    <div><span style="color:var(--text-muted); font-size:9px; display:block;">MOBILE</span><b class="${mobText.startsWith('+') ? 'text-emerald' : (mobText.startsWith('-') ? 'text-rose' : '')}">${mobText}</b></div>
+                    <div><span style="color:var(--text-muted); font-size:9px; display:block;">CASH</span><b class="${cashText.startsWith('+') ? 'text-emerald' : (cashText.startsWith('-') ? 'text-rose' : '')}">${cashText}</b></div>
+                    <div><span style="color:var(--text-muted); font-size:9px; display:block;">FEE</span><b class="${txFee > 0 ? 'text-emerald' : ''}">${feeText}</b></div>
+                    ${netLabel}
+                    ${loanRemainingLabel}
+                </div>
+                ${(tx.bank || tx.rrn || tx.acc) ? `
+                <div style="font-size:9.5px; color:var(--text-sub); display:flex; gap:8px; flex-wrap:wrap; padding-top:2px;">
+                    ${tx.bank ? `<span>🏦 ${tx.bank}</span>` : ''}
+                    ${tx.acc ? `<span>💳 ${tx.acc}</span>` : ''}
+                    ${tx.rrn ? `<span>🔢 RRN: ${tx.rrn}</span>` : ''}
+                </div>` : ''}
+                <div class="actions-row">
+                    <div class="tx-action-group">
+                        ${canShowDetails ? `<button type="button" class="btn-action-small btn-act-slip" onclick="openTransactionDetails('${tx.id}')">🔎 Details</button>` : ''}
+                        ${(!isExp && !isLoad && !isLoan && !isSettlement) ? `<button type="button" class="btn-action-small btn-act-slip" onclick="openSlipModal('${tx.id}')">🧾 Slip</button>` : ''}
+                        ${(!isExp && !isLoad && !isLoan && !isSettlement && tx.party !== 'Customer') ? `<button type="button" class="btn-action-small btn-act-history" onclick="openCustomerStatementModal('${tx.party}')">📑 History</button>` : ''}
+                        ${(!isExp && !isLoad && !isLoan && !isSettlement) ? `<button type="button" class="btn-action-small btn-act-dispute" onclick="addDisputeFromTxn('${tx.id}')">⚠️ Dispute</button>` : ''}
+                    </div>
+                    <div class="tx-action-group-right">
+                        ${''}
+                        <button type="button" class="btn-action-small btn-act-del" onclick="deleteTxnEntry('${tx.id}')">🗑️ Delete</button>
+                    </div>
+                </div>
+            `;
+            listDiv.appendChild(card);
+        });
+    }
+
+    var unpaidSettlementId = null;
+
+    function markUnpaidPaid(id) {
+        database.unpaidWithdrawals = database.unpaidWithdrawals || [];
+        var u = database.unpaidWithdrawals.find(function(x) { return x && x.id === id; });
+        if (!u || u.status !== 'Unpaid') { renderUnpaidModal(); return; }
+        unpaidSettlementId = id;
+        var feeDue = Number(u.feeDue != null ? u.feeDue : u.fee) || 0;
+        var info = document.getElementById('unpaidSettleInfo');
+        if (info) info.innerHTML = '<b>' + (u.party || 'Customer') + '</b><br>Withdrawal: <b>₹' + (Number(u.amount)||0).toLocaleString('en-IN') + '</b> • Fee Due: <b>₹' + feeDue.toLocaleString('en-IN') + '</b><br><span style="color:var(--text-muted);">Choose how the fee was actually received.</span>';
+        openModal('modalUnpaidSettle');
+    }
+
+    function completeUnpaidSettlement(feeCollection) {
+        var id = unpaidSettlementId;
+        if (!id) return;
+        database.unpaidWithdrawals = database.unpaidWithdrawals || [];
+        var u = database.unpaidWithdrawals.find(function(x){ return x && x.id === id; });
+        if (!u || u.status !== 'Unpaid') { closeModal('modalUnpaidSettle'); return; }
+        var amount = Number(u.amount)||0;
+        var feeDue = Number(u.feeDue != null ? u.feeDue : u.fee)||0;
+        var feeReceived = feeCollection === 'None' ? 0 : feeDue;
+        var now = new Date();
+        var paidDate = now.toLocaleDateString('en-GB');
+        var paidTime = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        var tx = (database.transactions||[]).find(function(x){ return x && x.id===id; });
+        if (tx) {
+            tx.status='Paid'; tx.paidDate=paidDate; tx.paidTime=paidTime; tx.charge=feeReceived;
+            tx.feeCollection=feeCollection==='None'?null:feeCollection; tx.chargeMode=tx.feeCollection||tx.chargeMode||'Cash';
+        } else {
+            var settleTx={
+                id:'SET'+Date.now().toString().slice(-6), type:'UnpaidSettlement', status:'Paid', amount:amount,
+                party:u.party||'Customer', charge:feeReceived, chargeMode:feeCollection==='None'?null:feeCollection,
+                feeCollection:feeCollection==='None'?null:feeCollection, sourceUnpaidId:id,
+                originalDate:u.date||'', originalTime:u.time||'', mobile:u.mobile||'', bank:u.bank||'', acc:u.acc||'', rrn:u.rrn||'',
+                date:paidDate, time:paidTime, isoDate:now.toISOString().split('T')[0]
+            };
+            database.transactions.unshift(settleTx);
+            database.allTransactionsHistory.unshift(settleTx);
+        }
+        var hist=(database.allTransactionsHistory||[]).find(function(x){ return x&&x.id===id; });
+        if(hist){ hist.status='Paid'; hist.paidDate=paidDate; hist.paidTime=paidTime; hist.charge=feeReceived; hist.feeCollection=feeCollection==='None'?null:feeCollection; hist.chargeMode=hist.feeCollection||hist.chargeMode||'Cash'; hist.feeDue=feeDue; hist.feeReceived=feeReceived; }
+        u.status='Paid'; u.paidDate=paidDate; u.paidTime=paidTime; u.feeCollection=feeCollection==='None'?null:feeCollection; u.feeReceived=feeReceived; u.feeOutstanding=Math.max(0,feeDue-feeReceived);
+        syncStorage(); closeModal('modalUnpaidSettle'); unpaidSettlementId=null; recalculateAndRender(); renderUnpaidModal();
+        showToast(feeCollection==='None'?'Withdrawal Paid • Fee Not Received':'Withdrawal + Fee Settled • Today Profit Updated ✅');
+    }
+
+    function deleteUnpaidWithdrawal(id) {
+        if (!confirm('Is Unpaid Withdrawal ko permanently delete karna hai?')) return;
+        database.unpaidWithdrawals = (database.unpaidWithdrawals || []).filter(function(x) { return x.id !== id; });
+        database.transactions = (database.transactions || []).filter(function(x) { return x.id !== id; });
+        database.allTransactionsHistory = (database.allTransactionsHistory || []).filter(function(x) { return x.id !== id; });
+        syncStorage();
+        recalculateAndRender();
+        renderUnpaidModal();
+        showToast('Unpaid Withdrawal Deleted 🗑️');
+    }
+
+    function getTransactionById(id) {
+        var live=(database.transactions||[]).find(function(t){return t.id===id;});
+        if(live)return live;
+        var hist=(database.allTransactionsHistory||[]).find(function(t){return t.id===id;});
+        if(hist)return hist;
+        for(var i=0;i<(database.archive||[]).length;i++){
+            var arr=database.archive[i].transactionSnapshots||[];
+            var snap=arr.find(function(t){return t.id===id;});
+            if(snap)return snap;
+        }
+        return null;
+    }
+
+    function escHtml(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+    function money(v){ return '₹'+(Number(v)||0).toLocaleString('en-IN'); }
+
+    function openTransactionDetails(id){
+        var tx=getTransactionById(id); if(!tx)return;
+        if(tx.type!=='Deposit' && tx.type!=='Withdrawal') return;
+        document.getElementById('detailTitle').innerText = tx.party || 'Transaction';
+        document.getElementById('detailSubtitle').innerText = (tx.date||tx.isoDate||'')+' • '+(tx.time||'')+' • '+(tx.id||'');
+        var type = tx.type==='BankLoad' ? (tx.chargeMode==='CashToBank'?'Cash → UPI':(tx.chargeMode==='CashToBankPending'?'Cash → UPI (Pending)':'UPI → Cash')) : (tx.type==='TransferSettlement'?(tx.settlementSide==='UPI'?'UPI Received (Transfer Settlement)':'Cash Received (Transfer Settlement)'):tx.type);
+        var status = tx.status || (tx.transferStatus==='Pending Cash' || tx.transferStatus==='Pending UPI' ? tx.transferStatus : 'Paid');
+        var fee = Number(tx.charge)||0;
+        var mode = tx.feeCollection || tx.chargeMode || '—';
+        var net = tx.type==='Withdrawal' && (tx.feeCollection||tx.chargeMode)==='Deducted' ? Math.max(0,Number(tx.amount)-fee) : null;
+        var cells=[
+            ['Type',type],['Status',status],['Amount',money(tx.amount)],['Fee / Charge',money(fee)],
+            ['Fee / Source',mode],['Customer / Person',tx.party||'—'],['Mobile',tx.mobile||'—'],['Bank',tx.bank||'—'],
+            ['Account / ID',tx.acc||'—'],['RRN / Reference',tx.rrn||'—'],['Date',tx.date||tx.isoDate||'—'],['Time',tx.time||'—']
+        ];
+        if(net!==null) cells.push(['Net Cash Paid',money(net)]);
+        if(tx.type==='BankLoad') cells.push(['Transfer Status',tx.transferStatus||'Complete']);
+        if(tx.type==='Udhar') { cells.push(['Udhar Action',tx.loanAction==='Give'?'🤝 Udhar Diya':'💰 Repayment / Paisa Wapas Mila']);
+            if(tx.loanAction==='Repay') { var remainingDetail=getUdharDueAfterTransaction(tx); cells.push(['Remaining Due After Payment',money(remainingDetail)]); } cells.push(['Balance Source',tx.loanMode==='Cash'?'Cash':'UPI']); }
+        if(tx.type==='TransferSettlement') cells.push(['Original Transfer ID',tx.sourceTransferId||'—'],['Original Date',tx.originalDate||'—'],[tx.settlementSide==='UPI'?'UPI Received On':'Cash Received On',tx.date+' '+tx.time]);
+        if(tx.type==='UnpaidSettlement') { cells.push(['Original Unpaid ID',tx.sourceUnpaidId||'—'],['Original Date',tx.originalDate||'—'],['Settled On',tx.date+' '+tx.time]); }
+        if(tx.type==='Withdrawal' && tx.status==='Paid' && tx.paidDate) cells.push(['Paid On',tx.paidDate+' '+(tx.paidTime||'')]);
+        document.getElementById('txnDetailsBody').innerHTML='<div class="details-grid">'+cells.map(function(c,i){return '<div class="detail-cell '+(i>11?'full':'')+'"><div class="detail-label">'+escHtml(c[0])+'</div><div class="detail-value">'+escHtml(c[1])+'</div></div>';}).join('')+'</div>';
+        openModal('modalTxnDetails');
+    }
+
+    function openClosedDayDetails(index){
+        var item=database.archive&&database.archive[index]; if(!item)return;
+        document.getElementById('closedDayTitle').innerText='📅 '+(item.date||'Closed Day');
+        document.getElementById('closedDaySummary').innerText='Closing Mobile '+money(item.closingMobile)+' • Cash '+money(item.closingCash)+' • Profit '+money(item.profit);
+        var txs=[];
+        if(Array.isArray(item.transactionSnapshots)) {
+            txs=item.transactionSnapshots.map(function(snap){
+                var latest=(database.allTransactionsHistory||[]).find(function(h){return h.id===snap.id;});
+                return latest ? Object.assign({}, snap, latest) : snap;
+            });
+        } else txs=(item.transactionIds||[]).map(function(id){return getTransactionById(id);}).filter(Boolean);
+        var box=document.getElementById('closedDayTxnList'); box.innerHTML='';
+        if(!txs.length){ box.innerHTML='<div class="empty-state">Is closed day mein transaction details available nahi hain.</div>'; openModal('modalClosedDay'); return; }
+        txs.forEach(function(tx){
+            var canShowDetails = tx.type==='Deposit' || tx.type==='Withdrawal';
+            var row=document.createElement('div');
+            row.className='due-card' + (canShowDetails ? ' clickable-txn' : '');
+            if (canShowDetails) row.onclick=function(){openTransactionDetails(tx.id);};
+            var typeLabel = tx.type==='BankLoad' ? (tx.chargeMode==='CashToBank'?'Cash → UPI':'UPI → Cash') : tx.type==='Udhar' ? (tx.loanAction==='Give'?'🤝 Udhar Diya':'💰 Repayment') : tx.type;
+            var statusLabel = canShowDetails ? (tx.status==='Unpaid' ? 'UNPAID' : 'SUCCESS') : (tx.status || (tx.transferStatus==='Complete' ? 'SUCCESS' : 'PENDING'));
+            row.innerHTML='<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;"><div><b style="font-size:12px;">'+escHtml(tx.party||'Transaction')+'</b><div style="font-size:9.5px;color:var(--text-muted);">'+escHtml(tx.date||'')+' • '+escHtml(tx.time||'')+' • '+escHtml(tx.id||'')+'</div></div><b class="mono">'+money(tx.amount)+'</b></div><div style="font-size:9.5px;color:var(--text-sub);margin-top:5px;">'+escHtml(typeLabel)+' • '+escHtml(statusLabel)+(canShowDetails?' • Tap for details':'')+'</div>';
+            box.appendChild(row);
+        });
+        openModal('modalClosedDay');
+    }
+
+    function getUdharDueAfterTransaction(tx){
+        var list=database.allTransactionsHistory||[];
+        var idx=list.findIndex(function(x){return x.id===tx.id;});
+        if(idx<0){
+            var fallback=getPersonDue(tx.party)-(Number(tx.amount)||0);
+            return Math.max(0,fallback);
+        }
+        var key=String(tx.party||'').trim().toLowerCase(), due=0;
+        // History is newest-first. Starting at this repayment and moving toward older entries
+        // gives the exact outstanding balance immediately after this payment, even if later
+        // repayments have already been recorded.
+        for(var i=idx;i<list.length;i++){
+            var t=list[i];
+            if(t.type==='Udhar' && String(t.party||'').trim().toLowerCase()===key){
+                due += t.loanAction==='Give' ? (Number(t.amount)||0) : -(Number(t.amount)||0);
+            }
+        }
+        return Math.max(0,due);
+    }
+
+    function getPersonDue(name){
+        var key=String(name||'').trim().toLowerCase(); if(!key)return 0;
+        var due=0;
+        (database.allTransactionsHistory||[]).forEach(function(t){
+            if(t.type==='Udhar' && String(t.party||'').trim().toLowerCase()===key){
+                due += t.loanAction==='Give' ? Number(t.amount)||0 : -(Number(t.amount)||0);
+            }
+        });
+        return Math.max(0,due);
+    }
+    function getUdharPeople(){
+        var map={}, names={};
+        (database.allTransactionsHistory||[]).forEach(function(t){
+            if(t.type==='Udhar'){
+                var display=String(t.party||'Person').trim()||'Person', k=display.toLowerCase();
+                if(!map[k])map[k]=0; names[k]=names[k]||display;
+                map[k]+=t.loanAction==='Give'?Number(t.amount)||0:-(Number(t.amount)||0);
+            }
+        });
+        return Object.keys(map).map(function(k){return {name:names[k],due:Math.max(0,map[k])};}).filter(function(x){return x.due>0;}).sort(function(a,b){return b.due-a.due;});
+    }
+    function openUdharModal(){renderUdharModal();openModal('modalUdhar');}
+    function renderUdharModal(){
+        var people=getUdharPeople(), total=people.reduce(function(a,x){return a+x.due;},0), box=document.getElementById('udharList');
+        document.getElementById('udharSummary').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:9px;color:var(--text-sub);font-weight:800;">TOTAL PENDING UDhar</div><div style="font-size:23px;font-weight:900;" class="mono text-amber">'+money(total)+'</div></div><div style="font-size:11px;font-weight:800;">'+people.length+' people</div></div>';
+        document.getElementById('udharCountTag').style.display=people.length?'flex':'none'; document.getElementById('udharCountTag').innerText=people.length;
+        box.innerHTML='';
+        if(!people.length){box.innerHTML='<div class="empty-state">Kisi ke paas udhar pending nahi hai. ✅</div>';return;}
+        people.forEach(function(x){var d=document.createElement('div');d.className='due-card';d.innerHTML='<div style="display:flex;justify-content:space-between;"><b>'+escHtml(x.name)+'</b><b class="mono text-amber">'+money(x.due)+'</b></div><div style="font-size:9.5px;color:var(--text-sub);margin-top:4px;">Pending balance • Tap Receive to record repayment</div><div class="due-actions"><button class="btn-action-small btn-mark-paid" type="button" onclick="receiveUdhar(\''+x.name.replace(/'/g,"\\'")+'\')">💰 Wapas Lena</button><button class="btn-action-small btn-act-slip" type="button" onclick="viewUdharHistory(\''+x.name.replace(/'/g,"\\'")+'\')">📑 History</button></div>';box.appendChild(d);});
+    }
+    function receiveUdhar(name){
+        var due=getPersonDue(name); if(due<=0){renderUdharModal();return;}
+        var amount=prompt(''+name+' se kitna paisa wapas mila?\nPending: ₹'+due.toLocaleString('en-IN')); if(amount===null)return;
+        amount=Number(amount); if(!amount||amount<=0||amount>due){alert('Valid amount dijiye. Maximum ₹'+due.toLocaleString('en-IN'));return;}
+        var mode=prompt('Paisa kis mein mila?\n1 = Cash\n2 = UPI'); if(mode===null)return; mode=mode==='2'?'Online':'Cash';
+        recordUdharRepayment(name,amount,mode);
+    }
+    function recordUdharRepayment(name,amount,mode){
+        var now=new Date(); var tx={id:'UDR'+Date.now().toString().slice(-6),type:'Udhar',status:'Paid',amount:Number(amount),party:name,loanAction:'Repay',loanMode:mode,charge:0,chargeMode:mode,feeCollection:null,mobile:'',bank:'',acc:'',rrn:'',date:now.toLocaleDateString('en-GB'),time:now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),isoDate:now.toISOString().split('T')[0]};
+        database.transactions.unshift(tx); database.allTransactionsHistory.unshift(tx); syncStorage(); recalculateAndRender(); renderUdharModal(); showToast('Udhar Repayment Recorded ✅');
+    }
+    function viewUdharHistory(name){ closeModal('modalUdhar'); openCustomerStatementModal(name); }
+
+    var pendingDueTab = 'cash';
+    function openPendingTransferModal(){ pendingDueTab='cash'; renderPendingTransferModal(); openModal('modalPendingTransfer'); }
+    function setPendingDueTab(tab){ pendingDueTab=tab==='upi'?'upi':'cash'; renderPendingTransferModal(); }
+    function renderPendingTransferModal(){
+        var list=document.getElementById('pendingTransferList'); if(!list)return; list.innerHTML='';
+        var all=database.allTransactionsHistory||[];
+        var cashPending=all.filter(function(t){return t.type==='BankLoad'&&t.transferStatus==='Pending Cash';});
+        var upiPending=all.filter(function(t){return t.type==='BankLoad'&&t.transferStatus==='Pending UPI';});
+        var pending=pendingDueTab==='upi'?upiPending:cashPending;
+        var badge=document.getElementById('pendingTransferCountTag');
+        if(badge){badge.innerText=cashPending.length+upiPending.length;badge.style.display=(cashPending.length+upiPending.length)?'flex':'none';}
+        var cc=document.getElementById('dueCashCount'), uc=document.getElementById('dueUpiCount');
+        if(cc)cc.innerText=cashPending.length;
+        if(uc)uc.innerText=upiPending.length;
+        var ct=document.getElementById('dueTabCash'), ut=document.getElementById('dueTabUpi');
+        if(ct)ct.className='btn-action-small '+(pendingDueTab==='cash'?'btn-mark-paid':'btn-act-slip');
+        if(ut)ut.className='btn-action-small '+(pendingDueTab==='upi'?'btn-mark-paid':'btn-act-slip');
+        if(!pending.length){list.innerHTML='<div class="empty-state">'+(pendingDueTab==='upi'?'Koi UPI Due pending nahi hai.':'Koi Cash Due pending nahi hai.')+' ✅</div>';return;}
+        pending.forEach(function(t){
+            var receiveLabel=t.transferStatus==='Pending Cash'?'💵 Cash receive hona baaki':'📲 UPI receive hona baaki';
+            var givenLabel=t.transferStatus==='Pending Cash'?'📱 UPI already minus':'💵 Cash already minus';
+            var d=document.createElement('div'); d.className='pending-transfer-card';
+            d.innerHTML='<div style="display:flex;justify-content:space-between;gap:8px;"><div><b>'+escHtml(t.party||'Transfer Due')+'</b><div style="font-size:9.5px;color:var(--text-muted);">'+escHtml(t.date||'')+' • '+escHtml(t.time||'')+' • '+escHtml(t.id||'')+'</div></div><b class="mono text-amber">'+money(t.amount)+'</b></div><div style="font-size:9.5px;color:var(--text-sub);margin-top:5px;">'+givenLabel+' • '+receiveLabel+'</div><div class="due-actions"><button class="btn-action-small btn-mark-paid" type="button" onclick="settlePendingTransfer(\''+t.id+'\')">'+(t.transferStatus==='Pending Cash'?'💵 Cash Mil Gaya':'📲 UPI Mil Gaya')+'</button></div>';
+            list.appendChild(d);
+        });
+    }
+    function settlePendingTransfer(id){
+        var tx=getTransactionById(id); if(!tx||tx.type!=='BankLoad'||(tx.transferStatus!=='Pending Cash'&&tx.transferStatus!=='Pending UPI'))return;
+        var receiveSide=tx.transferStatus==='Pending Cash'?'Cash':'UPI';
+        var h=(database.allTransactionsHistory||[]).find(function(x){return x.id===id;});
+        var live=(database.transactions||[]).find(function(x){return x.id===id;});
+        if(live){
+            live.transferStatus='Complete'; live.status='Paid';
+            if(h){h.transferStatus='Complete';h.status='Paid';}
+        } else {
+            if(h){h.transferStatus='Complete';h.status='Paid';}
+            var now=new Date();
+            var settle={id:'TRS'+Date.now().toString().slice(-6),type:'TransferSettlement',status:'Paid',amount:Number(tx.amount)||0,charge:0,chargeMode:'TransferSettlement',feeCollection:null,party:tx.party||'Cash ↔ UPI',mobile:tx.mobile||'',bank:tx.bank||'',acc:tx.acc||'',rrn:tx.rrn||'',settlementSide:receiveSide,sourceTransferId:tx.id,originalDate:tx.date||'',time:now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),date:now.toLocaleDateString('en-GB'),isoDate:now.toISOString().split('T')[0],originalDate:tx.date||''};
+            database.transactions.unshift(settle); database.allTransactionsHistory.unshift(settle);
+        }
+        syncStorage(); recalculateAndRender(); renderPendingTransferModal(); showToast((receiveSide==='Cash'?'Cash Received':'UPI Received')+' • Transfer Completed ✅');
+    }
+
+    function deleteTxnEntry(id) {
+        if (!confirm("Kya aap is transaction ko delete karna chahte hain?")) return;
+        var tx = (database.transactions || []).find(function(t) { return t.id === id; });
+        if (tx && tx.status === 'Unpaid') {
+            deleteUnpaidWithdrawal(id);
+            return;
+        }
+        database.transactions = database.transactions.filter(function(t) { return t.id !== id; });
+        database.allTransactionsHistory = database.allTransactionsHistory.filter(function(t) { return t.id !== id; });
+        syncStorage();
+        recalculateAndRender();
+        showToast('Entry Deleted!');
+    }
+
+    /* === 📊 OFFLINE PURE CSS BAR CHART GENERATOR === */
+    function renderAnalyticsCharts() {
+        var profitDiv = document.getElementById('profitBarsContainer');
+        var volDiv = document.getElementById('volumeBarsContainer');
+
+        var dataPoints = [];
+
+        // Aggregate today
+        var todayState = calculateLedgerState(database.transactions, 0, 0);
+        var todayProf = todayState.profit;
+        var todayVol = todayState.depositVolume + todayState.withdrawalVolume;
+
+        dataPoints.push({ label: 'Today', profit: Math.max(0, todayProf), vol: todayVol });
+
+        // Add last 6 archived days
+        if (database.archive && database.archive.length > 0) {
+            database.archive.slice(0, 6).forEach(function(arch) {
+                var dParts = (arch.date || '').split('/');
+                var shortDate = dParts.length >= 2 ? (dParts[0] + '/' + dParts[1]) : arch.date;
+                dataPoints.unshift({
+                    label: shortDate,
+                    profit: Math.max(0, arch.profit || 0),
+                    vol: Number(arch.volume || 0)
+                });
+            });
+        }
+
+        // Render Profit Bars
+        profitDiv.innerHTML = '';
+        var maxProfit = Math.max.apply(null, dataPoints.map(function(d) { return d.profit; })) || 100;
+        
+        dataPoints.forEach(function(dp) {
+            var col = document.createElement('div');
+            col.className = 'chart-col';
+            var pct = Math.max(6, Math.round((dp.profit / maxProfit) * 100));
+            col.innerHTML = `
+                <div class="chart-val-popup mono">₹${dp.profit}</div>
+                <div class="chart-bar highlight" style="height: ${pct}%;"></div>
+                <div class="chart-lbl">${dp.label}</div>
+            `;
+            profitDiv.appendChild(col);
+        });
+
+        // Render Volume Bars
+        volDiv.innerHTML = '';
+        var maxVol = Math.max.apply(null, dataPoints.map(function(d) { return d.vol; })) || 10000;
+        
+        dataPoints.forEach(function(dp) {
+            var col = document.createElement('div');
+            col.className = 'chart-col';
+            var pct = Math.max(6, Math.round((dp.vol / maxVol) * 100));
+            var volK = dp.vol >= 1000 ? (Math.round(dp.vol / 1000) + 'k') : dp.vol;
+            col.innerHTML = `
+                <div class="chart-val-popup mono">₹${volK}</div>
+                <div class="chart-bar" style="height: ${pct}%;"></div>
+                <div class="chart-lbl">${dp.label}</div>
+            `;
+            volDiv.appendChild(col);
+        });
+    }
+
+    function openCustomerStatementModal(name) {
+        currentStatementCustomer = name;
+        var allTx = database.allTransactionsHistory || [];
+        var custTx = allTx.filter(function(t) { return t.party.toLowerCase() === name.toLowerCase() && !(t.type === 'Withdrawal' && t.status === 'Unpaid'); });
+
+        var dep = 0, withD = 0, prof = 0;
+        custTx.forEach(function(t) {
+            if (t.type === 'Deposit') dep += t.amount;
+            else if (t.type === 'Withdrawal') withD += t.amount;
+            prof += (t.status === 'Unpaid' ? 0 : (t.charge || 0));
+        });
+
+        var custInfo = (database.savedCustomers || {})[name] || {};
+
+        document.getElementById('stmtCustName').innerText = name;
+        document.getElementById('stmtCustDetails').innerText = (custInfo.bank ? custInfo.bank + ' • ' : '') + (custInfo.mobile ? '📱 ' + custInfo.mobile : 'Lifetime Records');
+        document.getElementById('stmtDepVol').innerText = '₹' + dep.toLocaleString('en-IN');
+        document.getElementById('stmtWithVol').innerText = '₹' + withD.toLocaleString('en-IN');
+        document.getElementById('stmtProfit').innerText = '+₹' + prof.toLocaleString('en-IN');
+        document.getElementById('stmtCount').innerText = custTx.length + ' Txns';
+
+        var feed = document.getElementById('stmtTxnFeed');
+        feed.innerHTML = '';
+
+        custTx.forEach(function(t) {
+            var row = document.createElement('div');
+            row.style.cssText = 'background:var(--surface-card); padding:8px 10px; border-radius:8px; margin-bottom:6px; font-size:11px; display:flex; justify-content:space-between;';
+            row.innerHTML = `
+                <div><b>${t.date} ${t.time}</b><div style="font-size:9.5px; color:var(--text-muted);">${t.bank || ''} ${t.rrn ? '• RRN: ' + t.rrn : ''}</div></div>
+                <div style="text-align:right;"><b class="${t.type === 'Deposit' ? 'text-emerald' : 'text-rose'}">${t.type} ₹${t.amount}</b><div style="font-size:9.5px; color:var(--text-sub);">Fee: +₹${t.charge}</div></div>
+            `;
+            feed.appendChild(row);
+        });
+
+        openModal('modalStatement');
+    }
+
+    function shareCustomerStatementWhatsApp() {
+        if (!currentStatementCustomer) return;
+        var allTx = database.allTransactionsHistory || [];
+        var custTx = allTx.filter(function(t) { return t.party.toLowerCase() === currentStatementCustomer.toLowerCase() && !(t.type === 'Withdrawal' && t.status === 'Unpaid'); });
+        if (custTx.length === 0) return;
+
+        var dep = 0, withD = 0, listTxt = '';
+        custTx.slice(0, 8).forEach(function(t, i) {
+            if (t.type === 'Deposit') dep += t.amount; else if (t.type === 'Withdrawal') withD += t.amount;
+            listTxt += (i+1) + '. ' + t.date + ' - *' + t.type + '*: ₹' + t.amount.toLocaleString('en-IN') + '%0A';
+        });
+
+        var custInfo = (database.savedCustomers || {})[currentStatementCustomer] || {};
+        var msg = '*📑 CUSTOMER MINI-STATEMENT*%0A' +
+                    '*Shop:* Amar CSP & Banking Point%0A' +
+                    '*Customer:* ' + currentStatementCustomer + '%0A' +
+                    '----------------------------%0A' +
+                    listTxt +
+                    '----------------------------%0A' +
+                    '📥 *Total Deposits:* ₹' + dep.toLocaleString('en-IN') + '%0A' +
+                    '📤 *Total Withdrawals:* ₹' + withD.toLocaleString('en-IN') + '%0A' +
+                    '_Generated on ' + new Date().toLocaleDateString('en-IN') + '_';
+
+        var phoneParam = custInfo.mobile ? ('phone=91' + custInfo.mobile + '&') : '';
+        window.open('https://api.whatsapp.com/send?' + phoneParam + 'text=' + msg, '_blank');
+    }
+
+    function addDisputeFromTxn(id) {
+        var tx = database.transactions.find(function(t) { return t.id === id; });
+        if (!tx) return;
+
+        if (confirm("Kya is transaction ko DISPUTED / FAILED tracker me add karein?")) {
+            var newDisp = {
+                id: 'DISP' + Date.now().toString().slice(-4),
+                name: tx.party,
+                amount: tx.amount,
+                bank: tx.bank || 'Bank',
+                mobile: tx.mobile || '',
+                rrn: tx.rrn || 'Pending',
+                date: new Date().toLocaleDateString('en-GB'),
+                timestamp: Date.now()
+            };
+            database.disputes = database.disputes || [];
+            database.disputes.unshift(newDisp);
+            syncStorage();
+            renderDisputes();
+            showToast('Added to Dispute Tracker ⚠️');
+        }
+    }
+
+    function resolveDisputeItem(id) {
+        if (confirm("Kya ye paisa customer ke account me wapas aa gaya hai? (Mark Resolved)")) {
+            database.disputes = database.disputes.filter(function(d) { return d.id !== id; });
+            syncStorage();
+            renderDisputes();
+            showToast('Dispute Resolved! ✅');
+        }
+    }
+
+    function renderDisputes() {
+        var listDiv = document.getElementById('disputeListContainer');
+        listDiv.innerHTML = '';
+        database.disputes = database.disputes || [];
+
+        var totalStuck = 0;
+        var badge = document.getElementById('disputeCountTag');
+
+        if (database.disputes.length > 0) {
+            badge.innerText = database.disputes.length;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+
+        if (database.disputes.length === 0) {
+            listDiv.innerHTML = '<div class="empty-state">Koi pending dispute nahi hai.</div>';
+        } else {
+            database.disputes.forEach(function(d) {
+                totalStuck += d.amount;
+                var daysPassed = Math.floor((Date.now() - (d.timestamp || Date.now())) / (1000 * 60 * 60 * 24)) + 1;
+                var card = document.createElement('div');
+                card.className = 'dispute-item-card';
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div><b style="font-size:13px; color:var(--text-main);">${d.name}</b><div style="font-size:10px; color:var(--text-muted);">${d.date} • ${d.bank}</div></div>
+                        <div style="text-align:right;"><b class="text-rose mono" style="font-size:15px;">₹${d.amount.toLocaleString('en-IN')}</b><div style="font-size:9.5px; color:var(--amber);">⏱️ Day ${daysPassed} of 7</div></div>
+                    </div>
+                    <div style="font-size:10px; color:var(--text-sub); margin:4px 0;">${d.rrn ? 'RRN: <b>' + d.rrn + '</b> | ' : ''} ${d.mobile ? 'Mob: ' + d.mobile : ''}</div>
+                    <div style="display:flex; gap:6px; margin-top:6px;">
+                        <button type="button" class="btn-main-submit" style="background:#16a34a; font-size:10px; height:30px; flex:1;" onclick="resolveDisputeItem('${d.id}')">✓ Resolved (Refund Aaya)</button>
+                    </div>
+                `;
+                listDiv.appendChild(card);
+            });
+        }
+        document.getElementById('dispStuckAmt').innerText = '₹' + totalStuck.toLocaleString('en-IN');
+    }
+
+    function shareDisputesListWhatsApp() {
+        if (!database.disputes || database.disputes.length === 0) return;
+        var total = 0, txt = '';
+        database.disputes.forEach(function(d, i) {
+            total += d.amount;
+            txt += (i+1) + '. *' + d.name + '*: ₹' + d.amount + ' (' + d.bank + ' - ' + d.rrn + ')%0A';
+        });
+        var msg = '*⚠️ AMAR BANKING - PENDING DISPUTES LIST*%0A----------------------------%0A' + txt + '----------------------------%0A*TOTAL STUCK:* ₹' + total.toLocaleString('en-IN') + '%0A_Generated on ' + new Date().toLocaleDateString('en-IN') + '_';
+        window.open('https://wa.me/?text=' + msg, '_blank');
+    }
+
+    function generateFilteredReport() {
+        var sDate = document.getElementById('repStartDate').value;
+        var eDate = document.getElementById('repEndDate').value;
+        var listDiv = document.getElementById('reportFilteredList');
+        listDiv.innerHTML = '';
+
+        var allRecords = database.allTransactionsHistory || [];
+        var filtered = allRecords.filter(function(t) {
+            var d = t.isoDate || new Date().toISOString().split('T')[0];
+            return d >= sDate && d <= eDate;
+        });
+
+        if (filtered.length === 0) {
+            listDiv.innerHTML = '<div class="empty-state">No records found for selected dates.</div>';
+            return;
+        }
+
+        filtered.forEach(function(t) {
+            var card = document.createElement('div');
+            var canShowDetails = t.type === 'Deposit' || t.type === 'Withdrawal';
+            card.style.cssText = 'background:var(--surface-card); padding:11px; border-radius:14px; margin-bottom:7px; font-size:11px; display:flex; justify-content:space-between; cursor:' + (canShowDetails ? 'pointer' : 'default') + '; border:1px solid var(--border-light);';
+            if (canShowDetails) card.onclick = function(){ openTransactionDetails(t.id); };
+            var reportStatus = canShowDetails ? (t.status === 'Unpaid' ? 'UNPAID' : 'SUCCESS') : (t.status || (t.transferStatus === 'Complete' ? 'SUCCESS' : 'PENDING'));
+            card.innerHTML = `
+                <div><b>${t.party}</b> (${t.date || t.isoDate})<div style="font-size:9.5px; color:var(--text-muted);">${t.bank || ''}</div></div>
+                <div style="text-align:right;"><b class="${t.type === 'Deposit' ? 'text-emerald' : 'text-rose'}">${t.type} ₹${t.amount}</b><div style="font-size:9.5px; color:var(--text-sub);">${reportStatus}${canShowDetails ? ' • Fee: +₹' + t.charge : ''}</div></div>
+            `;
+            listDiv.appendChild(card);
+        });
+    }
+
+    function openSlipModal(id) {
+        var tx = database.transactions.find(function(t) { return t.id === id; }) || database.allTransactionsHistory.find(function(t) { return t.id === id; });
+        if (!tx) return;
+        currentSlipData = tx;
+
+        document.getElementById('slipId').innerText = tx.id;
+        document.getElementById('slipTime').innerText = tx.time + ', ' + tx.date;
+        document.getElementById('slipParty').innerText = tx.party;
+        document.getElementById('slipTypeTitle').innerText = tx.type.toUpperCase() + ' RECEIPT';
+        document.getElementById('slipAmt').innerText = '₹' + tx.amount.toLocaleString('en-IN');
+        document.getElementById('slipAmt').style.color = tx.type === 'Deposit' ? '#16a34a' : '#dc2626';
+
+        var bankRow = document.getElementById('slipBankRow');
+        var accRow = document.getElementById('slipAccRow');
+        var rrnRow = document.getElementById('slipRrnRow');
+
+        if (tx.bank) { document.getElementById('slipBank').innerText = tx.bank; bankRow.style.display = 'block'; } else bankRow.style.display = 'none';
+        if (tx.acc) { document.getElementById('slipAcc').innerText = tx.acc; accRow.style.display = 'block'; } else accRow.style.display = 'none';
+        if (tx.rrn) { document.getElementById('slipRrn').innerText = tx.rrn; rrnRow.style.display = 'block'; } else rrnRow.style.display = 'none';
+
+        applyLogoToUI();
+        openModal('modalSlip');
+    }
+
+    async function shareSlipAsImageWA() {
+        var card = document.getElementById('receiptCard');
+        showToast('Generating Receipt Image...');
+        try {
+            var canvas = await html2canvas(card, { scale: 3, backgroundColor: '#ffffff' });
+            canvas.toBlob(async function(blob) {
+                var file = new File([blob], 'Receipt_' + currentSlipData.id + '.png', { type: 'image/png' });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({ files: [file], title: 'Receipt ' + currentSlipData.id });
+                    } catch(err) {}
+                } else {
+                    var imgUrl = canvas.toDataURL('image/png');
+                    var dl = document.createElement('a');
+                    dl.href = imgUrl;
+                    dl.download = 'Receipt_' + currentSlipData.id + '.png';
+                    dl.click();
+                    alert('Receipt photo download ho gayi hai.');
+                }
+            }, 'image/png');
+        } catch(e) {
+            alert('Image capture error.');
+        }
+    }
+
+    function closeDayAndArchive() {
+        if (!confirm("Day close karein? Aaj ka closing balance agle din ka opening balance ban jayega.")) return;
+
+        // Use the same single-source calculation used by the live dashboard.
+        // Pending Unpaid withdrawals are ignored until they are actually settled.
+        var state = calculateLedgerState(database.transactions || [], database.openingMobile, database.openingCash);
+
+        database.archive = database.archive || [];
+        database.archive.unshift({
+            date: new Date().toLocaleDateString('en-IN'),
+            closingMobile: state.mobile,
+            closingCash: state.cash,
+            profit: state.profit,
+            volume: state.depositVolume + state.withdrawalVolume,
+            depositVolume: state.depositVolume,
+            withdrawalVolume: state.withdrawalVolume,
+            count: (database.transactions || []).length,
+            transactionIds: (database.transactions || []).map(function(t){return t.id;}),
+            transactionSnapshots: JSON.parse(JSON.stringify(database.transactions || [])),
+            closedIsoDate: new Date().toISOString().split('T')[0],
+            unpaidCount: (database.unpaidWithdrawals || []).filter(function(x){ return x.status === 'Unpaid'; }).length,
+            unpaidAmount: (database.unpaidWithdrawals || []).filter(function(x){ return x.status === 'Unpaid'; }).reduce(function(a,x){ return a + (Number(x.amount)||0); }, 0)
+        });
+
+        database.openingMobile = state.mobile;
+        database.openingCash = state.cash;
+        database.transactions = [];
+
+        document.getElementById('cfgMobile').value = state.mobile;
+        document.getElementById('cfgCash').value = state.cash;
+
+        syncStorage();
+        recalculateAndRender();
+        showToast('Day Closed & Balances Rolled Over! 🎉');
+    }
+
+    function renderArchive() {
+        var feed = document.getElementById('historyFeed');
+        feed.innerHTML = '';
+        if (!database.archive || database.archive.length === 0) {
+            feed.innerHTML = '<div class="empty-state">No archives yet.</div>';
+            return;
+        }
+        database.archive.forEach(function(item) {
+            var card = document.createElement('div');
+            card.style.cssText = 'background:var(--surface-card); padding:10px; border-radius:8px; margin-bottom:8px; border:1px solid var(--border-light); font-size:11px;';
+            card.className = 'due-card clickable-txn';
+            card.onclick = function(){ openClosedDayDetails(database.archive.indexOf(item)); };
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between;"><b>📅 ${item.date}</b><b class="text-emerald">+₹${Number(item.profit||0).toLocaleString('en-IN')} Profit</b></div>
+                <div style="color:var(--text-sub); margin-top:4px;">Mobile: ${money(item.closingMobile)} | Cash: ${money(item.closingCash)} • ${item.count||0} Txns</div>
+                <div style="font-size:9px;color:var(--primary);margin-top:6px;font-weight:800;">TAP TO VIEW ALL TRANSACTIONS & DETAILS →</div>
+            `;
+            feed.appendChild(card);
+        });
+    }
+
+    function shareWhatsAppDailySummary() {
+        var state = calculateLedgerState(database.transactions || [], database.openingMobile, database.openingCash);
+        var pending = (database.unpaidWithdrawals || []).filter(function(x){ return x.status === 'Unpaid'; });
+        var pendingTransfers = (database.allTransactionsHistory || []).filter(function(x){ return x.type==='BankLoad' && (x.transferStatus==='Pending Cash' || x.transferStatus==='Pending UPI'); });
+        var loanPeople = getUdharPeople ? getUdharPeople() : [];
+        var pendingAmount = pending.reduce(function(a,x){ return a + (Number(x.amount)||0); }, 0);
+        var msg = '*📊 AMAR BANKING DAILY CSP SUMMARY (%2B' + new Date().toLocaleDateString('en-IN') + ')*%0A%0A' +
+                    '📱 *Mobile Vault:* ₹' + state.mobile.toLocaleString('en-IN') + '%0A' +
+                    '💵 *Cash Vault:* ₹' + state.cash.toLocaleString('en-IN') + '%0A' +
+                    '💰 *Total Vault:* ₹' + state.total.toLocaleString('en-IN') + '%0A' +
+                    '⚡ *Net Profit:* ₹' + state.profit.toLocaleString('en-IN') + '%0A' +
+                    '💸 *Expenses:* ₹' + state.expenses.toLocaleString('en-IN') + '%0A' +
+                    '📥 *Deposit Volume:* ₹' + state.depositVolume.toLocaleString('en-IN') + '%0A' +
+                    '📤 *Withdrawal Volume:* ₹' + state.withdrawalVolume.toLocaleString('en-IN') + '%0A' +
+                    '📝 *Total Entries:* ' + (database.transactions || []).length + '%0A' +
+                    (pending.length ? '🟠 *Unpaid Pending:* ' + pending.length + ' (₹' + pendingAmount.toLocaleString('en-IN') + ')%0A' : '') +
+                    '%0A_Amar Banking Pro_';
+        window.open('https://wa.me/?text=' + msg, '_blank');
+    }
+
+    function exportCompleteBackupJSON() {
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(database, null, 2));
+        var dl = document.createElement('a');
+        dl.setAttribute("href", dataStr);
+        dl.setAttribute("download", "Amar_Banking_Full_Backup_" + new Date().toISOString().split('T')[0] + ".json");
+        dl.click();
+    }
+
+    function handleJsonRestore(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(evt) {
+            try {
+                database = JSON.parse(evt.target.result);
+                syncStorage();
+                init();
+                closeModal('modalSettings');
+                showToast('Backup Restored Successfully! 🎉');
+            } catch(err) {
+                alert('Invalid JSON file!');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
